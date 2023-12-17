@@ -1,4 +1,4 @@
-module github.com/mrspec7er/go-chi
+module github.com/mrspec7er/go-http-std
 
 go 1.21.5
 
