@@ -1,31 +1,16 @@
 package main
 
 import (
-	"log"
-	"net/http"
+	"context"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+	"github.com/mrspec7er/go-http-std/app"
 )
 
 func main() {
-	router := chi.NewRouter()
-	router.Use(middleware.Logger)
-	server := &http.Server{
-		Addr: ":8080",
-		Handler: router,
-	}
+	app := app.New()
 
-	log.Println("Server Start On Port :", 8080)
-
-	router.Get("/", handler)
-
-	err := server.ListenAndServe()
+	err := app.Start(context.TODO())
 	if err != nil {
-		panic(err.Error())
-	}
-}
-
-func handler(w http.ResponseWriter, r *http.Request)  {
-	w.Write([]byte("Hello There!"))
+		panic(err)
+	} 
 }
