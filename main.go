@@ -5,8 +5,16 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/joho/godotenv"
 	"github.com/mrspec7er/go-http-std/app"
 )
+
+func init()  {
+	err := godotenv.Load()
+	if err != nil {
+		panic(err.Error())
+	}
+}
 
 func main() {
 	app := app.New()
