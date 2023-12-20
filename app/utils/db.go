@@ -19,5 +19,4 @@ func DBConnection() {
 	}
 
 	DB = connection
-
 }

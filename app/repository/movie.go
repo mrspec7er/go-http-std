@@ -1,8 +1,9 @@
-package model
+package repository
 
 import (
 	"time"
 
+	"github.com/mrspec7er/go-http-std/app/utils"
 	"gorm.io/gorm"
 )
 
@@ -23,4 +24,19 @@ type Movie struct {
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"index"`
+}
+
+type Movies []*Movie
+
+func (Movie) Create(req *Movie) (error) {
+	err := utils.DB.Create(&req).Error
+
+	return  err
+}
+
+func (Movies) GetAll() (*Movies, error) {
+	m := &Movies{}
+	err := utils.DB.Find(&m).Error
+
+	return m, err
 }
