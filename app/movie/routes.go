@@ -9,7 +9,7 @@ func Routes(router chi.Router)  {
 
 	router.Post("/", controller.HandlerCreate)
 	router.Get("/", controller.HandlerGetAll)	
+	router.Get("/{id}", controller.HandlerGetOne)
 	router.Put("/{id}", HandlerUpdate)
-	router.Get("/{id}", HandlerGetOne)
 	router.Delete("/{id}", HandlerDelete)
 }

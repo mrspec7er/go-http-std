@@ -31,8 +31,15 @@ func (MovieService) GetAll() ([]*repository.Movie, int, error) {
 	return *result, 200, nil
 }
 
-func (MovieService) GetOne(id uint) {
-	fmt.Println("Get one Movie")
+func (MovieService) GetOne(id uint) (*repository.Movie, int, error) {
+	movie := &repository.Movie{}
+
+	result, err := movie.GetByID(id)
+	if err != nil {
+		return result, 500, err
+	}
+
+	return result, 200, nil
 }
 
 func (MovieService) Update(movie repository.Movie) {

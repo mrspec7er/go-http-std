@@ -40,3 +40,10 @@ func (Movies) GetAll() (*Movies, error) {
 
 	return m, err
 }
+
+func (Movie) GetByID(id uint) (*Movie, error) {
+	m := &Movie{ID: id}
+	err := utils.DB.First(&m).Error
+
+	return m, err
+}
