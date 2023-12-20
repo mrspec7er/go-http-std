@@ -3,44 +3,42 @@ package movie
 import (
 	"fmt"
 
-	"gorm.io/gorm"
+	"github.com/mrspec7er/go-http-std/app/repository"
 )
 
-type Movie struct {
-	Title string `json:"title"`
-	Description string `json:"description"`
-	Director string `json:"director"`
-	Genres string `json:"genres"`
-	Cast string `json:"cast"`
-	DateAdded string `json:"dateAdded"`
-}
+type MovieService struct {}
 
-type MovieService struct {
-	DB *gorm.DB
-}
+func (MovieService) Create(req repository.Movie) (int, error) {
+	movie := &repository.Movie{}
 
-func (m MovieService) Create(movie Movie) (int, error) {
-	err := m.DB.Create(&movie).Error
-
+	err := movie.Create(&req)
 	if err != nil {
 		return 500, err
 	}
 
-	return 201, nil
+	return 200, nil
 }
 
-func (m MovieService) GetAll() {
-	fmt.Println("Get all Movie")
+func (MovieService) GetAll() ([]*repository.Movie, int, error) {
+	movies := &repository.Movies{}
+
+	result, err := movies.GetAll()
+
+	if err != nil {
+		return *result, 500, err
+	}
+
+	return *result, 200, nil
 }
 
-func (m MovieService) GetOne(id uint) {
+func (MovieService) GetOne(id uint) {
 	fmt.Println("Get one Movie")
 }
 
-func (m MovieService) Update(movie Movie) {
+func (MovieService) Update(movie repository.Movie) {
 	fmt.Println("Update a Movie")
 }
 
-func (m MovieService) Delete(id uint) {
+func (MovieService) Delete(id uint) {
 	fmt.Println("Delete a Movie")
 }
