@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"strings"
 	"time"
 
 	"github.com/mrspec7er/go-http-std/app/utils"
@@ -35,9 +36,13 @@ func (Movie) Create(req *Movie) (error) {
 	return  err
 }
 
-func (Movies) GetAll() (*Movies, error) {
+func (Movies) GetAll(offset int, limit int, keyword string) (*Movies, error) {
 	m := &Movies{}
-	err := utils.DB.Find(&m).Error
+	query := utils.DB.Offset(offset * limit).Limit(limit)
+	if keyword != "" {
+		query = query.Where("LOWER(title) LIKE ? OR LOWER(description) LIKE ?", "%"+strings.ToLower(keyword)+"%", "%"+strings.ToLower(keyword)+"%")
+	}
+	err := query.Find(&m).Error
 
 	return m, err
 }

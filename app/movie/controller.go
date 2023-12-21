@@ -33,7 +33,23 @@ func(c *MovieController) HandlerCreate(w http.ResponseWriter, r *http.Request)  
 }
 
 func (c *MovieController) HandlerGetAll(w http.ResponseWriter, r *http.Request) {
-	result, status, err := c.Movie.GetAll()
+	p := r.URL.Query().Get("page")
+	page, err := strconv.Atoi(p)
+	if err != nil {
+		utils.BadRequestHandler(w)
+        return
+	}
+
+	l := r.URL.Query().Get("limit")
+	limit, err := strconv.Atoi(l)
+	if err != nil {
+		utils.BadRequestHandler(w)
+        return
+	}
+
+	keyword := r.URL.Query().Get("keyword")
+	
+	result, status, err := c.Movie.GetAll(page, limit, keyword)
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return

@@ -19,10 +19,10 @@ func (MovieService) Create(req repository.Movie) (int, error) {
 	return 200, nil
 }
 
-func (MovieService) GetAll() ([]*repository.Movie, int, error) {
+func (MovieService) GetAll(page int, limit int, keyword string) ([]*repository.Movie, int, error) {
 	movies := &repository.Movies{}
 
-	result, err := movies.GetAll()
+	result, err := movies.GetAll(page -1, limit, keyword)
 
 	if err != nil {
 		return *result, 500, err
