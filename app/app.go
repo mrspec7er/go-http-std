@@ -18,12 +18,11 @@ func New() *App {
 	}
 }
 
-
 func (a *App) Start(ctx context.Context) error {
 
 	utils.DBConnection()
 	
-	utils.DB.AutoMigrate(&repository.Movie{})
+	utils.DB.AutoMigrate(&repository.Movie{}, &repository.Genre{})
 	
 	server := &http.Server{
 		Addr: ":8080",
