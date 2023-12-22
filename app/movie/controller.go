@@ -28,7 +28,7 @@ func(c *MovieController) HandlerCreate(w http.ResponseWriter, r *http.Request)  
 		return
 	}
 
-	utils.CreateSuccessResponse(w, "Successfully insert new movie")
+	utils.MutationSuccessResponse(w, "Successfully insert new movie")
 
 }
 
@@ -55,7 +55,7 @@ func (c *MovieController) HandlerGetAll(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	utils.GetSuccessResponse(w, result)
+	utils.GetSuccessResponse(w, nil, result, nil)
 }
 
 func (c *MovieController) HandlerGetOne(w http.ResponseWriter, r *http.Request) {
@@ -72,7 +72,7 @@ func (c *MovieController) HandlerGetOne(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	utils.GetSuccessResponse(w, result)
+	utils.GetSuccessResponse(w, nil, result, nil)
 }
 
 func HandlerUpdate(w http.ResponseWriter, r *http.Request) {

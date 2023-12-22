@@ -30,7 +30,7 @@ func(c *GenreController) HandlerCreate(w http.ResponseWriter, r *http.Request)  
 		return
 	}
 
-	utils.CreateSuccessResponse(w, "Successfully insert new genre")
+	utils.MutationSuccessResponse(w, "Successfully insert new genre")
 
 }
 
@@ -41,7 +41,7 @@ func (c *GenreController) HandlerGetAll(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	utils.GetSuccessResponse(w, result)
+	utils.GetSuccessResponse(w, nil, result, nil)
 }
 
 func (c *GenreController) HandlerGetOne(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +58,7 @@ func (c *GenreController) HandlerGetOne(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	utils.GetSuccessResponse(w, result)
+	utils.GetSuccessResponse(w, nil, result, nil)
 }
 
 func HandlerUpdate(w http.ResponseWriter, r *http.Request) {

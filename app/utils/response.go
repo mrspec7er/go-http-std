@@ -6,29 +6,115 @@ import (
 )
 
 func InternalServerErrorHandler(w http.ResponseWriter, status int, err error) {
-    w.WriteHeader(status)
-    w.Write([]byte(err.Error()))
+	message := err.Error()
+    response := struct {
+		Status		bool `json:"status"`
+		Message 	*string `json:"message"`
+		Data 		interface{} `json:"data"`
+		Metadata 	interface{} `json:"metadata"`
+	}{
+		Status: false,
+		Message: &message,
+		Data: nil,
+		Metadata: nil,
+	}
+	w.Header().Set("Content-Type", "application/json")
+	responseData, err := json.Marshal(response)
+	if err != nil {
+		InternalServerErrorHandler(w, 500, err)
+		return
+	}
+
+	w.WriteHeader(status)
+	w.Write(responseData)
 }
 
 func NotFoundHandler(w http.ResponseWriter) {
-    w.WriteHeader(http.StatusNotFound)
-    w.Write([]byte("Not Found"))
+	message := "Data Not Found"
+    response := struct {
+		Status		bool `json:"status"`
+		Message 	*string `json:"message"`
+		Data 		interface{} `json:"data"`
+		Metadata 	interface{} `json:"metadata"`
+	}{
+		Status: false,
+		Message: &message,
+		Data: nil,
+		Metadata: nil,
+	}
+	w.Header().Set("Content-Type", "application/json")
+	responseData, err := json.Marshal(response)
+	if err != nil {
+		InternalServerErrorHandler(w, 500, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusNotFound)
+	w.Write(responseData)
 }
 
 func BadRequestHandler(w http.ResponseWriter) {
-    w.WriteHeader(http.StatusBadRequest)
-    w.Write([]byte("Bad Request"))
+	message := "Bad Request"
+    response := struct {
+		Status		bool `json:"status"`
+		Message 	*string `json:"message"`
+		Data 		interface{} `json:"data"`
+		Metadata 	interface{} `json:"metadata"`
+	}{
+		Status: false,
+		Message: &message,
+		Data: nil,
+		Metadata: nil,
+	}
+	w.Header().Set("Content-Type", "application/json")
+	responseData, err := json.Marshal(response)
+	if err != nil {
+		InternalServerErrorHandler(w, 500, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusBadRequest)
+	w.Write(responseData)
 }
 
 func UnauthorizeUser(w http.ResponseWriter) {
-    w.WriteHeader(http.StatusUnauthorized)
-    w.Write([]byte("Unauthorize User"))
+	message := "Unauthorize user"
+    response := struct {
+		Status		bool `json:"status"`
+		Message 	*string `json:"message"`
+		Data 		interface{} `json:"data"`
+		Metadata 	interface{} `json:"metadata"`
+	}{
+		Status: false,
+		Message: &message,
+		Data: nil,
+		Metadata: nil,
+	}
+	w.Header().Set("Content-Type", "application/json")
+	responseData, err := json.Marshal(response)
+	if err != nil {
+		InternalServerErrorHandler(w, 500, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusUnauthorized)
+	w.Write(responseData)
 }
 
-func CreateSuccessResponse(w http.ResponseWriter, message string)  {
-	responseJSON := map[string]string{"message": message}
+func MutationSuccessResponse(w http.ResponseWriter, message string)  {
+	response := struct {
+		Status		bool `json:"status"`
+		Message 	*string `json:"message"`
+		Data 		interface{} `json:"data"`
+		Metadata 	interface{} `json:"metadata"`
+	}{
+		Status: true,
+		Message: &message,
+		Data: nil,
+		Metadata: nil,
+	}
 	w.Header().Set("Content-Type", "application/json")
-	responseData, err := json.Marshal(responseJSON)
+	responseData, err := json.Marshal(response)
 	if err != nil {
 		InternalServerErrorHandler(w, 500, err)
 		return
@@ -38,10 +124,20 @@ func CreateSuccessResponse(w http.ResponseWriter, message string)  {
 	w.Write(responseData)
 }
 
-func GetSuccessResponse(w http.ResponseWriter, data interface{})  {
-	responseJSON := data
+func GetSuccessResponse(w http.ResponseWriter, message *string, data interface{}, metadata interface{})  {
+	response := struct {
+		Status		bool `json:"status"`
+		Message 	*string `json:"message"`
+		Data 		interface{} `json:"data"`
+		Metadata 	interface{} `json:"metadata"`
+	}{
+		Status: true,
+		Message: message,
+		Data: data,
+		Metadata: metadata,
+	}
 	w.Header().Set("Content-Type", "application/json")
-	responseData, err := json.Marshal(responseJSON)
+	responseData, err := json.Marshal(response)
 	if err != nil {
 		InternalServerErrorHandler(w, 500, err)
 		return
