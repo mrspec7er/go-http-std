@@ -1,9 +1,11 @@
 package genre
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/mrspec7er/go-http-std/app/repository"
+	"gorm.io/gorm"
 )
 
 type GenreService struct {}
@@ -35,6 +37,9 @@ func (GenreService) GetOne(id uint) (*repository.Genre, int, error) {
 	movie := &repository.Genre{}
 
 	result, err := movie.GetByID(id)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return result, 400, err
+	}
 	if err != nil {
 		return result, 500, err
 	}
