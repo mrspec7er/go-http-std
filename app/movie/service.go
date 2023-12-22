@@ -21,16 +21,16 @@ func (MovieService) Create(req repository.Movie) (int, error) {
 	return 200, nil
 }
 
-func (MovieService) GetAll(page int, limit int, keyword string) ([]*repository.Movie, int, error) {
+func (MovieService) GetAll(page int, limit int, keyword string) ([]*repository.Movie, *int64, int, error) {
 	movies := &repository.Movies{}
 
-	result, err := movies.GetAll(page -1, limit, keyword)
+	result, count, err := movies.GetAll(page -1, limit, keyword)
 
 	if err != nil {
-		return *result, 500, err
+		return *result, nil, 500, err
 	}
 
-	return *result, 200, nil
+	return *result, count, 200, nil
 }
 
 func (MovieService) GetOne(id uint) (*repository.Movie, int, error) {
@@ -40,7 +40,7 @@ func (MovieService) GetOne(id uint) (*repository.Movie, int, error) {
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return result, 400, err
 	}
-	
+
 	if err != nil {
 		return result, 500, err
 	}

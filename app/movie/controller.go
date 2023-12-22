@@ -49,13 +49,19 @@ func (c *MovieController) HandlerGetAll(w http.ResponseWriter, r *http.Request) 
 
 	keyword := r.URL.Query().Get("keyword")
 	
-	result, status, err := c.Movie.GetAll(page, limit, keyword)
+	result, count, status, err := c.Movie.GetAll(page, limit, keyword)
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return
 	}
 
-	utils.GetSuccessResponse(w, nil, result, nil)
+	metadata := utils.Metadata{
+		Page: page,
+		Limit: limit,
+		Count: *count,
+	}
+
+	utils.GetSuccessResponse(w, nil, result, &metadata)
 }
 
 func (c *MovieController) HandlerGetOne(w http.ResponseWriter, r *http.Request) {

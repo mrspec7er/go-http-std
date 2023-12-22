@@ -36,15 +36,17 @@ func (Movie) Create(req *Movie) (error) {
 	return  err
 }
 
-func (Movies) GetAll(offset int, limit int, keyword string) (*Movies, error) {
+func (Movies) GetAll(offset int, limit int, keyword string) (*Movies, *int64, error) {
 	m := &Movies{}
+	var count int64
+
 	query := utils.DB.Offset(offset * limit).Limit(limit)
 	if keyword != "" {
 		query = query.Where("LOWER(title) LIKE ? OR LOWER(description) LIKE ?", "%"+strings.ToLower(keyword)+"%", "%"+strings.ToLower(keyword)+"%")
 	}
-	err := query.Find(&m).Error
+	err := query.Find(&m).Offset(-1).Count(&count).Error
 
-	return m, err
+	return m, &count, err
 }
 
 func (Movie) GetByID(id uint) (*Movie, error) {

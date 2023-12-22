@@ -5,6 +5,12 @@ import (
 	"net/http"
 )
 
+type Metadata struct {
+	Page int `json:"page"`
+	Limit int `json:"limit"`
+	Count int64 `json:"count"`
+}
+
 func InternalServerErrorHandler(w http.ResponseWriter, status int, err error) {
 	message := err.Error()
     response := struct {
@@ -124,7 +130,7 @@ func MutationSuccessResponse(w http.ResponseWriter, message string)  {
 	w.Write(responseData)
 }
 
-func GetSuccessResponse(w http.ResponseWriter, message *string, data interface{}, metadata interface{})  {
+func GetSuccessResponse(w http.ResponseWriter, message *string, data interface{}, metadata *Metadata)  {
 	response := struct {
 		Status		bool `json:"status"`
 		Message 	*string `json:"message"`
