@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/mrspec7er/go-http-std/app/director"
 	"github.com/mrspec7er/go-http-std/app/genre"
 	"github.com/mrspec7er/go-http-std/app/movie"
 )
@@ -19,6 +20,7 @@ func loadRoutes() *chi.Mux {
 
 	router.Route("/movies", movie.Routes)
 	router.Route("/genres", genre.Routes)
+	router.Route("/directors", director.Routes)
 
 	return router
 }
