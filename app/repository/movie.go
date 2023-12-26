@@ -24,6 +24,7 @@ type Movie struct {
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"index"`
+	// Has one relation
 	GenreID uint `json:"genreId"`
 	Genre *Genre `json:"genre" gorm:"constraint:OnDelete:SET NULL"`
 }
@@ -44,14 +45,14 @@ func (Movies) GetAll(offset int, limit int, keyword string) (*Movies, *int64, er
 	if keyword != "" {
 		query = query.Where("LOWER(title) LIKE ? OR LOWER(description) LIKE ?", "%"+strings.ToLower(keyword)+"%", "%"+strings.ToLower(keyword)+"%")
 	}
-	err := query.Find(&m).Offset(-1).Count(&count).Error
+	err := query.Preload("Genre").Find(&m).Offset(-1).Count(&count).Error
 
 	return m, &count, err
 }
 
 func (Movie) GetByID(id uint) (*Movie, error) {
 	m := &Movie{ID: id}
-	err := utils.DB.First(&m).Error
+	err := utils.DB.Preload("Genre").First(&m).Error
 
 	return m, err
 }
