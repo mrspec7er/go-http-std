@@ -13,6 +13,8 @@ type Director struct {
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"index"`
+	// Has many relation
+	Movies *[]Movie `json:"movies"`
 }
 
 type Directors []*Director
@@ -25,14 +27,14 @@ func (Director) Create(req *Director) (error) {
 
 func (Directors) GetAll() (*Directors, error) {
 	m := &Directors{}
-	err := utils.DB.Find(&m).Error
+	err := utils.DB.Preload("Movies").Find(&m).Error
 
 	return m, err
 }
 
 func (Director) GetByID(id uint) (*Director, error) {
 	m := &Director{ID: id}
-	err := utils.DB.First(&m).Error
+	err := utils.DB.Preload("Movies").First(&m).Error
 
 	return m, err
 }
