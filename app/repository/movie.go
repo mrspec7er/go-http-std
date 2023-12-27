@@ -12,7 +12,6 @@ type Movie struct {
 	ID uint `json:"id" gorm:"primaryKey"`
 	Title string `json:"title" gorm:"index,priority:1; type:varchar(128)"`
 	Description string `json:"description" gorm:"type:text"`
-	Cast string `json:"cast" gorm:"index,priority:2; type:varchar(256)"`
 	ProductionCountry string `json:"productionCountry" gorm:"type:varchar(128)"`
 	ReleaseDate string `json:"releaseDate" gorm:"type:varchar(64)"`
 	Rating string `json:"rating" gorm:"type:varchar(64)"`
@@ -29,7 +28,8 @@ type Movie struct {
 	// Has many relation
 	DirectorID uint `json:"directorId"`
 	Director *Director `json:"director" gorm:"constraint:OnDelete:SET NULL"`
-
+	// Many 2 many relation
+	Casts *[]Cast `json:"casts" gorm:"many2many:cast_movies;"`
 }
 
 type Movies []*Movie
@@ -48,14 +48,14 @@ func (Movies) GetAll(offset int, limit int, keyword string) (*Movies, *int64, er
 	if keyword != "" {
 		query = query.Where("LOWER(title) LIKE ? OR LOWER(description) LIKE ?", "%"+strings.ToLower(keyword)+"%", "%"+strings.ToLower(keyword)+"%")
 	}
-	err := query.Preload("Genre").Preload("Director").Find(&m).Offset(-1).Count(&count).Error
+	err := query.Preload("Genre").Preload("Director").Preload("Casts").Find(&m).Offset(-1).Count(&count).Error
 
 	return m, &count, err
 }
 
 func (Movie) GetByID(id uint) (*Movie, error) {
 	m := &Movie{ID: id}
-	err := utils.DB.Preload("Genre").Preload("Director").First(&m).Error
+	err := utils.DB.Preload("Genre").Preload("Director").Preload("Casts").First(&m).Error
 
 	return m, err
 }
