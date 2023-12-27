@@ -11,9 +11,9 @@ import (
 type GenreService struct {}
 
 func (GenreService) Create(req repository.Genre) (int, error) {
-	movie := &repository.Genre{}
+	genre := &repository.Genre{}
 
-	err := movie.Create(&req)
+	err := genre.Create(&req)
 	if err != nil {
 		return 500, err
 	}
@@ -22,9 +22,9 @@ func (GenreService) Create(req repository.Genre) (int, error) {
 }
 
 func (GenreService) GetAll() ([]*repository.Genre, int, error) {
-	movies := &repository.Genres{}
+	genres := &repository.Genres{}
 
-	result, err := movies.GetAll()
+	result, err := genres.GetAll()
 
 	if err != nil {
 		return *result, 500, err
@@ -34,9 +34,9 @@ func (GenreService) GetAll() ([]*repository.Genre, int, error) {
 }
 
 func (GenreService) GetOne(id uint) (*repository.Genre, int, error) {
-	movie := &repository.Genre{}
+	genre := &repository.Genre{}
 
-	result, err := movie.GetByID(id)
+	result, err := genre.GetByID(id)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return result, 400, err
 	}
@@ -47,10 +47,10 @@ func (GenreService) GetOne(id uint) (*repository.Genre, int, error) {
 	return result, 200, nil
 }
 
-func (GenreService) Update(movie repository.Genre) {
-	fmt.Println("Update a Movie")
+func (GenreService) Update(genre repository.Genre) {
+	fmt.Println("Update a genre")
 }
 
 func (GenreService) Delete(id uint) {
-	fmt.Println("Delete a Movie")
+	fmt.Println("Delete a genre")
 }

@@ -11,9 +11,9 @@ import (
 type DirectorService struct {}
 
 func (DirectorService) Create(req repository.Director) (int, error) {
-	movie := &repository.Director{}
+	director := &repository.Director{}
 
-	err := movie.Create(&req)
+	err := director.Create(&req)
 	if err != nil {
 		return 500, err
 	}
@@ -22,9 +22,9 @@ func (DirectorService) Create(req repository.Director) (int, error) {
 }
 
 func (DirectorService) GetAll() ([]*repository.Director, int, error) {
-	movies := &repository.Directors{}
+	directors := &repository.Directors{}
 
-	result, err := movies.GetAll()
+	result, err := directors.GetAll()
 
 	if err != nil {
 		return *result, 500, err
@@ -34,9 +34,9 @@ func (DirectorService) GetAll() ([]*repository.Director, int, error) {
 }
 
 func (DirectorService) GetOne(id uint) (*repository.Director, int, error) {
-	movie := &repository.Director{}
+	director := &repository.Director{}
 
-	result, err := movie.GetByID(id)
+	result, err := director.GetByID(id)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return result, 400, err
 	}
@@ -47,10 +47,10 @@ func (DirectorService) GetOne(id uint) (*repository.Director, int, error) {
 	return result, 200, nil
 }
 
-func (DirectorService) Update(movie repository.Director) {
-	fmt.Println("Update a Movie")
+func (DirectorService) Update(director repository.Director) {
+	fmt.Println("Update a director")
 }
 
 func (DirectorService) Delete(id uint) {
-	fmt.Println("Delete a Movie")
+	fmt.Println("Delete a director")
 }
