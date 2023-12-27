@@ -22,7 +22,13 @@ func (a *App) Start(ctx context.Context) error {
 
 	utils.DBConnection()
 	
-	utils.DB.AutoMigrate(&repository.Movie{}, &repository.Genre{}, &repository.User{}, &repository.Director{})
+	utils.DB.AutoMigrate(
+		&repository.Movie{}, 
+		&repository.Genre{}, 
+		&repository.User{}, 
+		&repository.Director{},
+		&repository.Cast{},
+	)
 	
 	server := &http.Server{
 		Addr: ":8080",
