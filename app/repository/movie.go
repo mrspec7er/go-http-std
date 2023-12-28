@@ -59,3 +59,8 @@ func (Movie) GetByID(id uint) (*Movie, error) {
 
 	return m, err
 }
+
+func (Movie) Update(req *Movie) (error) {
+	err := utils.DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&req).Error
+	return  err
+}

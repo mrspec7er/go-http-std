@@ -10,6 +10,6 @@ func Routes(router chi.Router)  {
 	router.Post("/", controller.HandlerCreate)
 	router.Get("/", controller.HandlerGetAll)	
 	router.Get("/{id}", controller.HandlerGetOne)
-	router.Put("/{id}", HandlerUpdate)
+	router.Put("/", controller.HandlerUpdate)
 	router.Delete("/{id}", HandlerDelete)
 }

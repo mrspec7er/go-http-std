@@ -81,8 +81,20 @@ func (c *MovieController) HandlerGetOne(w http.ResponseWriter, r *http.Request) 
 	utils.GetSuccessResponse(w, nil, result, nil)
 }
 
-func HandlerUpdate(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Update a Movie")
+func (c *MovieController) HandlerUpdate(w http.ResponseWriter, r *http.Request) {
+	var movie repository.Movie
+    if err := json.NewDecoder(r.Body).Decode(&movie); err != nil || movie.ID == 0 {
+        utils.BadRequestHandler(w)
+        return
+    }
+
+	status, err := c.Movie.Update(movie)
+	if err != nil {
+		utils.InternalServerErrorHandler(w, status, err)
+		return
+	}
+
+	utils.MutationSuccessResponse(w, "Successfully insert new movie")
 }
 
 func HandlerDelete(w http.ResponseWriter, r *http.Request) {

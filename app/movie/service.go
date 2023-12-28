@@ -48,8 +48,19 @@ func (MovieService) GetOne(id uint) (*repository.Movie, int, error) {
 	return result, 200, nil
 }
 
-func (MovieService) Update(movie repository.Movie) {
-	fmt.Println("Update a Movie")
+func (MovieService) Update(req repository.Movie) (int, error) {
+	movie := &repository.Movie{}
+
+	err := movie.Update(&req)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return 400, err
+	}
+
+	if err != nil {
+		return 500, err
+	}
+
+	return 200, nil
 }
 
 func (MovieService) Delete(id uint) {
