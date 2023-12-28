@@ -22,7 +22,7 @@ type User struct {
 type Users []*User
 
 func (User) Create(req *User) (error) {
-	err := utils.DB.Create(&req).Error
+	err := utils.DB.Create(&User{Name: req.Name, Email: req.Email, Password: "Encrypted", Status: "INACTIVE", Role: "USER"}).Error
 
 	return  err
 }

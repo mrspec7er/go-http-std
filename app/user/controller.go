@@ -12,30 +12,30 @@ import (
 )
 
 
-type DirectorController struct {
-	Director DirectorService
+type UserController struct {
+	User UserService
 }
 
 
-func(c *DirectorController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
-	var Director repository.Director
-    if err := json.NewDecoder(r.Body).Decode(&Director); err != nil {
+func(c *UserController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
+	var user repository.User
+    if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
         utils.BadRequestHandler(w)
         return
     }
 
-	status, err := c.Director.Create(Director)
+	status, err := c.User.Create(user)
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return
 	}
 
-	utils.MutationSuccessResponse(w, "Successfully insert new Director")
+	utils.MutationSuccessResponse(w, "Successfully insert new User")
 
 }
 
-func (c *DirectorController) HandlerGetAll(w http.ResponseWriter, r *http.Request) {
-	result, status, err := c.Director.GetAll()
+func (c *UserController) HandlerGetAll(w http.ResponseWriter, r *http.Request) {
+	result, status, err := c.User.GetAll()
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return
@@ -44,7 +44,7 @@ func (c *DirectorController) HandlerGetAll(w http.ResponseWriter, r *http.Reques
 	utils.GetSuccessResponse(w, nil, result, nil)
 }
 
-func (c *DirectorController) HandlerGetOne(w http.ResponseWriter, r *http.Request) {
+func (c *UserController) HandlerGetOne(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id");
 	formattedId, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
@@ -52,7 +52,7 @@ func (c *DirectorController) HandlerGetOne(w http.ResponseWriter, r *http.Reques
         return
 	}
 
-	result, status, err := c.Director.GetOne(uint(formattedId))
+	result, status, err := c.User.GetOne(uint(formattedId))
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return
