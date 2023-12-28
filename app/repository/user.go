@@ -3,6 +3,7 @@ package repository
 import (
 	"time"
 
+	"github.com/mrspec7er/go-http-std/app/utils"
 	"gorm.io/gorm"
 )
 
@@ -16,4 +17,26 @@ type User struct {
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"index"`
+}
+
+type Users []*User
+
+func (User) Create(req *User) (error) {
+	err := utils.DB.Create(&req).Error
+
+	return  err
+}
+
+func (Users) GetAll() (*Users, error) {
+	m := &Users{}
+	err := utils.DB.Find(&m).Error
+
+	return m, err
+}
+
+func (User) GetByID(id uint) (*User, error) {
+	m := &User{ID: id}
+	err := utils.DB.First(&m).Error
+
+	return m, err
 }
