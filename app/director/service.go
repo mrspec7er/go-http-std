@@ -8,12 +8,14 @@ import (
 	"gorm.io/gorm"
 )
 
-type DirectorService struct {}
+type DirectorService struct {
+	director repository.Director
+}
 
-func (DirectorService) Create(req repository.Director) (int, error) {
-	director := &repository.Director{}
+func (s *DirectorService) Create(req *repository.Director) (int, error) {
+	s.director = *req
 
-	err := director.Create(&req)
+	err := s.director.Create()
 	if err != nil {
 		return 500, err
 	}
@@ -21,22 +23,18 @@ func (DirectorService) Create(req repository.Director) (int, error) {
 	return 200, nil
 }
 
-func (DirectorService) GetAll() ([]*repository.Director, int, error) {
-	directors := &repository.Directors{}
-
-	result, err := directors.GetAll()
+func (s *DirectorService) GetAll() ([]*repository.Director, int, error) {
+	result, err := s.director.GetAll()
 
 	if err != nil {
-		return *result, 500, err
+		return result, 500, err
 	}
 
-	return *result, 200, nil
+	return result, 200, nil
 }
 
-func (DirectorService) GetOne(id uint) (*repository.Director, int, error) {
-	director := &repository.Director{}
-
-	result, err := director.GetByID(id)
+func (s *DirectorService) GetOne(id uint) (*repository.Director, int, error) {
+	result, err := s.director.GetByID(id)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return result, 400, err
 	}

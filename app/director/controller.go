@@ -11,31 +11,28 @@ import (
 	"github.com/mrspec7er/go-http-std/app/utils"
 )
 
-
 type DirectorController struct {
-	Director DirectorService
+	service DirectorService
 }
 
-
 func(c *DirectorController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
-	var Director repository.Director
-    if err := json.NewDecoder(r.Body).Decode(&Director); err != nil {
+	var director repository.Director
+    if err := json.NewDecoder(r.Body).Decode(&director); err != nil {
         utils.BadRequestHandler(w)
         return
     }
 
-	status, err := c.Director.Create(Director)
+	status, err := c.service.Create(&director)
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return
 	}
 
 	utils.MutationSuccessResponse(w, "Successfully insert new Director")
-
 }
 
 func (c *DirectorController) HandlerGetAll(w http.ResponseWriter, r *http.Request) {
-	result, status, err := c.Director.GetAll()
+	result, status, err := c.service.GetAll()
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return
@@ -52,7 +49,7 @@ func (c *DirectorController) HandlerGetOne(w http.ResponseWriter, r *http.Reques
         return
 	}
 
-	result, status, err := c.Director.GetOne(uint(formattedId))
+	result, status, err := c.service.GetOne(uint(formattedId))
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return
