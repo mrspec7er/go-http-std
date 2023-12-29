@@ -8,12 +8,13 @@ import (
 	"gorm.io/gorm"
 )
 
-type GenreService struct {}
+type GenreService struct {
+	genre repository.Genre
+}
 
-func (GenreService) Create(req repository.Genre) (int, error) {
-	genre := &repository.Genre{}
-
-	err := genre.Create(&req)
+func (s *GenreService) Create(req *repository.Genre) (int, error) {
+	s.genre = *req
+	err := s.genre.Create()
 	if err != nil {
 		return 500, err
 	}
@@ -21,22 +22,21 @@ func (GenreService) Create(req repository.Genre) (int, error) {
 	return 200, nil
 }
 
-func (GenreService) GetAll() ([]*repository.Genre, int, error) {
-	genres := &repository.Genres{}
+func (s *GenreService) GetAll() ([]*repository.Genre, int, error) {
 
-	result, err := genres.GetAll()
+	result, err := s.genre.GetAll()
 
 	if err != nil {
-		return *result, 500, err
+		return result, 500, err
 	}
 
-	return *result, 200, nil
+	return result, 200, nil
 }
 
-func (GenreService) GetOne(id uint) (*repository.Genre, int, error) {
-	genre := &repository.Genre{}
+func (s *GenreService) GetOne(id uint) (*repository.Genre, int, error) {
+	s.genre.ID = id
 
-	result, err := genre.GetByID(id)
+	result, err := s.genre.GetByID(id)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return result, 400, err
 	}

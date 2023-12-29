@@ -11,11 +11,9 @@ import (
 	"github.com/mrspec7er/go-http-std/app/utils"
 )
 
-
 type GenreController struct {
-	Genre GenreService
+	service GenreService
 }
-
 
 func(c *GenreController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
 	var genre repository.Genre
@@ -24,18 +22,17 @@ func(c *GenreController) HandlerCreate(w http.ResponseWriter, r *http.Request)  
         return
     }
 
-	status, err := c.Genre.Create(genre)
+	status, err := c.service.Create(&genre)
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return
 	}
 
 	utils.MutationSuccessResponse(w, "Successfully insert new genre")
-
 }
 
 func (c *GenreController) HandlerGetAll(w http.ResponseWriter, r *http.Request) {
-	result, status, err := c.Genre.GetAll()
+	result, status, err := c.service.GetAll()
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return
@@ -52,7 +49,7 @@ func (c *GenreController) HandlerGetOne(w http.ResponseWriter, r *http.Request) 
         return
 	}
 
-	result, status, err := c.Genre.GetOne(uint(formattedId))
+	result, status, err := c.service.GetOne(uint(formattedId))
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return

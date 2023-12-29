@@ -15,24 +15,21 @@ type Genre struct {
 	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 }
 
-type Genres []*Genre
-
-func (Genre) Create(req *Genre) (error) {
-	err := utils.DB.Create(&req).Error
+func (g *Genre) Create() (error) {
+	err := utils.DB.Create(&g).Error
 
 	return  err
 }
 
-func (Genres) GetAll() (*Genres, error) {
-	m := &Genres{}
-	err := utils.DB.Find(&m).Error
+func (g *Genre) GetAll() ([]*Genre, error) {
+	genres := []*Genre{}
+	err := utils.DB.Find(&genres).Error
 
-	return m, err
+	return genres, err
 }
 
-func (Genre) GetByID(id uint) (*Genre, error) {
-	m := &Genre{ID: id}
-	err := utils.DB.First(&m).Error
+func (g *Genre) GetByID(id uint) (*Genre, error) {
+	err := utils.DB.First(&g).Error
 
-	return m, err
+	return g, err
 }
