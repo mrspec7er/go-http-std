@@ -59,6 +59,16 @@ func (m *Movie) GetByID(id uint) (*Movie, error) {
 }
 
 func (m *Movie) Update() (error) {
+	err := utils.DB.Updates(&m).Error
+	return  err
+}
+
+func (m *Movie) UpdateModelAndAssociation() (error) {
 	err := utils.DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&m).Error
 	return  err
+}
+
+func (m *Movie) UpdateAssociation() (error) {
+	res := utils.DB.Model(&m).Association("Casts").Replace(m.Casts)
+	return  res
 }
