@@ -32,35 +32,33 @@ type Movie struct {
 	Casts *[]Cast `json:"casts" gorm:"many2many:cast_movies;"`
 }
 
-type Movies []*Movie
-
-func (Movie) Create(req *Movie) (error) {
-	err := utils.DB.Create(&req).Error
+func (m *Movie) Create() (error) {
+	err := utils.DB.Create(&m).Error
 
 	return  err
 }
 
-func (Movies) GetAll(offset int, limit int, keyword string) (*Movies, *int64, error) {
-	m := &Movies{}
+func (m *Movie) GetAll(offset int, limit int, keyword string) ([]*Movie, *int64, error) {
+	movies := []*Movie{}
 	var count int64
 
 	query := utils.DB.Offset(offset * limit).Limit(limit)
 	if keyword != "" {
 		query = query.Where("LOWER(title) LIKE ? OR LOWER(description) LIKE ?", "%"+strings.ToLower(keyword)+"%", "%"+strings.ToLower(keyword)+"%")
 	}
-	err := query.Preload("Genre").Preload("Director").Preload("Casts").Find(&m).Offset(-1).Count(&count).Error
+	err := query.Preload("Genre").Preload("Director").Preload("Casts").Find(&movies).Offset(-1).Count(&count).Error
 
-	return m, &count, err
+	return movies, &count, err
 }
 
-func (Movie) GetByID(id uint) (*Movie, error) {
-	m := &Movie{ID: id}
+func (m *Movie) GetByID(id uint) (*Movie, error) {
+	m.ID = id
 	err := utils.DB.Preload("Genre").Preload("Director").Preload("Casts").First(&m).Error
 
 	return m, err
 }
 
-func (Movie) Update(req *Movie) (error) {
-	err := utils.DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&req).Error
+func (m *Movie) Update() (error) {
+	err := utils.DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&m).Error
 	return  err
 }

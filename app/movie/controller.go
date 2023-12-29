@@ -12,7 +12,7 @@ import (
 )
 
 type MovieController struct {
-	Movie MovieService
+	service MovieService
 }
 
 func(c *MovieController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
@@ -22,14 +22,13 @@ func(c *MovieController) HandlerCreate(w http.ResponseWriter, r *http.Request)  
         return
     }
 
-	status, err := c.Movie.Create(movie)
+	status, err := c.service.Create(&movie)
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return
 	}
 
 	utils.MutationSuccessResponse(w, "Successfully insert new movie")
-
 }
 
 func (c *MovieController) HandlerGetAll(w http.ResponseWriter, r *http.Request) {
@@ -49,7 +48,7 @@ func (c *MovieController) HandlerGetAll(w http.ResponseWriter, r *http.Request) 
 
 	keyword := r.URL.Query().Get("keyword")
 	
-	result, count, status, err := c.Movie.GetAll(page, limit, keyword)
+	result, count, status, err := c.service.GetAll(page, limit, keyword)
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return
@@ -72,7 +71,7 @@ func (c *MovieController) HandlerGetOne(w http.ResponseWriter, r *http.Request) 
         return
 	}
 
-	result, status, err := c.Movie.GetOne(uint(formattedId))
+	result, status, err := c.service.GetOne(uint(formattedId))
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return
@@ -88,7 +87,7 @@ func (c *MovieController) HandlerUpdate(w http.ResponseWriter, r *http.Request) 
         return
     }
 
-	status, err := c.Movie.Update(movie)
+	status, err := c.service.Update(&movie)
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return

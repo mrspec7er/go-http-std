@@ -8,12 +8,13 @@ import (
 	"gorm.io/gorm"
 )
 
-type MovieService struct {}
+type MovieService struct {
+	movie repository.Movie
+}
 
-func (MovieService) Create(req repository.Movie) (int, error) {
-	movie := &repository.Movie{}
-
-	err := movie.Create(&req)
+func (s *MovieService) Create(req *repository.Movie) (int, error) {
+	s.movie = *req
+	err := s.movie.Create()
 	if err != nil {
 		return 500, err
 	}
@@ -21,22 +22,19 @@ func (MovieService) Create(req repository.Movie) (int, error) {
 	return 200, nil
 }
 
-func (MovieService) GetAll(page int, limit int, keyword string) ([]*repository.Movie, *int64, int, error) {
-	movies := &repository.Movies{}
+func (s *MovieService) GetAll(page int, limit int, keyword string) ([]*repository.Movie, *int64, int, error) {
 
-	result, count, err := movies.GetAll(page -1, limit, keyword)
+	result, count, err := s.movie.GetAll(page -1, limit, keyword)
 
 	if err != nil {
-		return *result, nil, 500, err
+		return result, nil, 500, err
 	}
 
-	return *result, count, 200, nil
+	return result, count, 200, nil
 }
 
-func (MovieService) GetOne(id uint) (*repository.Movie, int, error) {
-	movie := &repository.Movie{}
-
-	result, err := movie.GetByID(id)
+func (s *MovieService) GetOne(id uint) (*repository.Movie, int, error) {
+	result, err := s.movie.GetByID(id)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return result, 400, err
 	}
@@ -48,10 +46,9 @@ func (MovieService) GetOne(id uint) (*repository.Movie, int, error) {
 	return result, 200, nil
 }
 
-func (MovieService) Update(req repository.Movie) (int, error) {
-	movie := &repository.Movie{}
-
-	err := movie.Update(&req)
+func (s *MovieService) Update(req *repository.Movie) (int, error) {
+	s.movie = *req
+	err := s.movie.Update()
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return 400, err
 	}

@@ -1,9 +1,11 @@
 package cast
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/mrspec7er/go-http-std/app/repository"
+	"gorm.io/gorm"
 )
 
 type CastService struct {
@@ -34,6 +36,9 @@ func (s *CastService) GetAll() ([]*repository.Cast, int, error) {
 func (s *CastService) GetOne(id uint) (*repository.Cast, int, error) {
 
 	result, err := s.cast.GetByID(id)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return result, 400, err
+	}
 	if err != nil {
 		return result, 500, err
 	}
