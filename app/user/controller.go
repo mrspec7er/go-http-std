@@ -13,9 +13,8 @@ import (
 
 
 type UserController struct {
-	User UserService
+	service UserService
 }
-
 
 func(c *UserController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
 	var user repository.User
@@ -24,7 +23,7 @@ func(c *UserController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
         return
     }
 
-	status, err := c.User.Create(user)
+	status, err := c.service.Create(&user)
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return
@@ -35,7 +34,7 @@ func(c *UserController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
 }
 
 func (c *UserController) HandlerGetAll(w http.ResponseWriter, r *http.Request) {
-	result, status, err := c.User.GetAll()
+	result, status, err := c.service.GetAll()
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return
@@ -52,7 +51,7 @@ func (c *UserController) HandlerGetOne(w http.ResponseWriter, r *http.Request) {
         return
 	}
 
-	result, status, err := c.User.GetOne(uint(formattedId))
+	result, status, err := c.service.GetOne(uint(formattedId))
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return

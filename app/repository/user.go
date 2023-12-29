@@ -19,24 +19,22 @@ type User struct {
 	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 }
 
-type Users []*User
-
-func (User) Create(req *User) (error) {
-	err := utils.DB.Create(&User{Name: req.Name, Email: req.Email, Password: "Encrypted", Status: "INACTIVE", Role: "USER"}).Error
+func (u *User) Create() (error) {
+	err := utils.DB.Create(&u).Error
 
 	return  err
 }
 
-func (Users) GetAll() (*Users, error) {
-	m := &Users{}
-	err := utils.DB.Find(&m).Error
+func (u *User) GetAll() ([]*User, error) {
+	users := []*User{}
+	err := utils.DB.Find(&users).Error
 
-	return m, err
+	return users, err
 }
 
-func (User) GetByID(id uint) (*User, error) {
-	m := &User{ID: id}
-	err := utils.DB.First(&m).Error
+func (u *User) GetByID(id uint) (*User, error) {
+	u.ID = id
+	err := utils.DB.First(&u).Error
 
-	return m, err
+	return u, err
 }
