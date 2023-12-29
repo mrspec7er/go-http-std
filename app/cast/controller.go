@@ -13,29 +13,27 @@ import (
 
 
 type CastController struct {
-	Cast CastService
+	service CastService
 }
 
-
 func(c *CastController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
-	var Cast repository.Cast
-    if err := json.NewDecoder(r.Body).Decode(&Cast); err != nil {
+	var cast repository.Cast
+    if err := json.NewDecoder(r.Body).Decode(&cast); err != nil {
         utils.BadRequestHandler(w)
         return
     }
 
-	status, err := c.Cast.Create(Cast)
+	status, err := c.service.Create(&cast)
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return
 	}
 
 	utils.MutationSuccessResponse(w, "Successfully insert new Cast")
-
 }
 
 func (c *CastController) HandlerGetAll(w http.ResponseWriter, r *http.Request) {
-	result, status, err := c.Cast.GetAll()
+	result, status, err := c.service.GetAll()
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return
@@ -52,7 +50,7 @@ func (c *CastController) HandlerGetOne(w http.ResponseWriter, r *http.Request) {
         return
 	}
 
-	result, status, err := c.Cast.GetOne(uint(formattedId))
+	result, status, err := c.service.GetOne(uint(formattedId))
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return

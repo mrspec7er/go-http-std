@@ -1,19 +1,19 @@
 package cast
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/mrspec7er/go-http-std/app/repository"
-	"gorm.io/gorm"
 )
 
-type CastService struct {}
+type CastService struct {
+	cast repository.Cast
+}
 
-func (CastService) Create(req repository.Cast) (int, error) {
-	cast := &repository.Cast{}
+func (s *CastService) Create(req *repository.Cast) (int, error) {
+	s.cast = *req
 
-	err := cast.Create(&req)
+	err := s.cast.Create()
 	if err != nil {
 		return 500, err
 	}
@@ -21,25 +21,19 @@ func (CastService) Create(req repository.Cast) (int, error) {
 	return 200, nil
 }
 
-func (CastService) GetAll() ([]*repository.Cast, int, error) {
-	casts := &repository.Casts{}
-
-	result, err := casts.GetAll()
+func (s *CastService) GetAll() ([]*repository.Cast, int, error) {
+	result, err := s.cast.GetAll()
 
 	if err != nil {
-		return *result, 500, err
+		return result, 500, err
 	}
 
-	return *result, 200, nil
+	return result, 200, nil
 }
 
-func (CastService) GetOne(id uint) (*repository.Cast, int, error) {
-	cast := &repository.Cast{}
+func (s *CastService) GetOne(id uint) (*repository.Cast, int, error) {
 
-	result, err := cast.GetByID(id)
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return result, 400, err
-	}
+	result, err := s.cast.GetByID(id)
 	if err != nil {
 		return result, 500, err
 	}

@@ -17,24 +17,22 @@ type Cast struct {
 	Movies *[]Movie `json:"movies" gorm:"many2many:cast_movies;"`
 }
 
-type Casts []*Cast
-
-func (Cast) Create(req *Cast) (error) {
-	err := utils.DB.Create(&req).Error
+func (c *Cast) Create() (error) {
+	err := utils.DB.Create(&c).Error
 
 	return  err
 }
 
-func (Casts) GetAll() (*Casts, error) {
-	m := &Casts{}
-	err := utils.DB.Preload("Movies").Find(&m).Error
+func (c *Cast) GetAll() ([]*Cast, error) {
+	casts := []*Cast{}
+	err := utils.DB.Preload("Movies").Find(&casts).Error
 
-	return m, err
+	return casts, err
 }
 
-func (Cast) GetByID(id uint) (*Cast, error) {
-	m := &Cast{ID: id}
-	err := utils.DB.Preload("Movies").First(&m).Error
+func (c *Cast) GetByID(id uint) (*Cast, error) {
+	c.ID = id
+	err := utils.DB.Preload("Movies").First(&c).Error
 
-	return m, err
+	return c, err
 }
