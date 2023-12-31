@@ -2,15 +2,26 @@ package auth
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
-	"io"
 	"net/http"
 
+	"github.com/mrspec7er/go-http-std/app/repository"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
 
-type AuthService struct {}
+type AuthService struct {
+	user repository.User
+}
+
+type UserInfo struct {
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	VerifiedEmail bool `json:"verified_email"`
+	Picture string `json:"picture"`
+}
 
 var conf *oauth2.Config
 
@@ -38,15 +49,34 @@ func (s AuthService) GetUserToken(state string, code string) (*string, error) {
 	return &token.AccessToken, nil
 }
 
-func (s AuthService) GetUserInfo(accessToken string) ([]byte, error) {
+func (s AuthService) GetUserInfo(accessToken string) (*UserInfo, error) {
 	response, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + accessToken)
 	if err != nil {
 		return nil, errors.New("failed getting user info: " + err.Error())
 	}
 	defer response.Body.Close()
-	contents, err := io.ReadAll(response.Body)
-	if err != nil {
-		return nil, errors.New("failed reading response body: " + err.Error())
+
+	userInfo := &UserInfo{}
+	
+	if err := json.NewDecoder(response.Body).Decode(&userInfo); err != nil {
+		return nil, err
 	}
-	return contents, nil
+
+	return userInfo, nil
+}
+
+func (s AuthService) SaveUser(req *UserInfo) (int, error) {
+	status := "INACTIVE"
+	if req.VerifiedEmail {
+		status = "ACTIVE"
+	}
+
+	user := &repository.User{Name: req.Name, Email: req.Email, Status: status, Role: "USER"}
+
+	err := user.Create()
+	if err != nil {
+		return 500, errors.New("failed reading response body: " + err.Error())
+	}
+
+	return 201, nil
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/mrspec7er/go-http-std/app/utils"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type User struct {
@@ -20,7 +21,7 @@ type User struct {
 }
 
 func (u *User) Create() (error) {
-	err := utils.DB.Create(&u).Error
+	err := utils.DB.Clauses(clause.OnConflict{DoNothing: true}).Create(&u).Error
 
 	return  err
 }

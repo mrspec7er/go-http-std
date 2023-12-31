@@ -20,37 +20,38 @@ func (AuthController) HandleGoogleLogin(w http.ResponseWriter, r *http.Request) 
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
-func (c AuthController) HandleAuthCallback(w http.ResponseWriter, r *http.Request) {
+func (c *AuthController) HandleAuthCallback(w http.ResponseWriter, r *http.Request) {
 	token, err := c.service.GetUserToken(r.FormValue("state"), r.FormValue("code"))
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		utils.InternalServerErrorHandler(w, 500, err)
 		return
 	}
 
+	info, err := c.service.GetUserInfo(*token)
+	if err != nil {
+		utils.InternalServerErrorHandler(w, 500, err)
+		return
+	}
+
+	status, err := c.service.SaveUser(info)
+	if err != nil {
+		utils.InternalServerErrorHandler(w, status, err)
+		return
+	}
+	
 	tokenCookie := &http.Cookie{Name: "accessToken", Value: *token, HttpOnly: false}
 	http.SetCookie(w, tokenCookie)
 
 	utils.SuccessMessageResponse(w, "Login Success")
 }
 
-func (c AuthController) HandleGetUserInfo(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("accessToken")
-	if err != nil {
-		fmt.Println("ERRORS: ", err.Error())
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		return
-	}
-	info, err := c.service.GetUserInfo(cookie.Value)
-	if err != nil {
-		fmt.Println("ERRORS: ", err.Error())
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		return
-	}
+func (c *AuthController) HandleGetUserInfo(w http.ResponseWriter, r *http.Request) {
+	message := "Authenticated Success"
 
-	w.Write([]byte(info))
+	utils.GetSuccessResponse(w, &message, nil, nil)
 }
 
-func (c AuthController) HandleLoginTemplate(w http.ResponseWriter, r *http.Request) {
+func (c *AuthController) HandleLoginTemplate(w http.ResponseWriter, r *http.Request) {
 	var htmlIndex = `
 		<html>
 			<body>
