@@ -30,7 +30,7 @@ func (s AuthService) GetUserToken(state string, code string) (*string, error) {
 	if state != oauthStateGoogle {
 		return nil, errors.New("invalid oauth state")
 	}
-	token, err := conf.Exchange(context.Background(), code)
+	token, err := conf.Exchange(context.TODO(), code)
 	if err != nil {
 		return nil, errors.New("code exchange failed: " + err.Error())
 	}
