@@ -107,6 +107,29 @@ func UnauthorizeUser(w http.ResponseWriter) {
 	w.Write(responseData)
 }
 
+func SuccessMessageResponse(w http.ResponseWriter, message string) {
+    response := struct {
+		Status		bool `json:"status"`
+		Message 	*string `json:"message"`
+		Data 		interface{} `json:"data"`
+		Metadata 	interface{} `json:"metadata"`
+	}{
+		Status: true,
+		Message: &message,
+		Data: nil,
+		Metadata: nil,
+	}
+	w.Header().Set("Content-Type", "application/json")
+	responseData, err := json.Marshal(response)
+	if err != nil {
+		InternalServerErrorHandler(w, 500, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusAccepted)
+	w.Write(responseData)
+}
+
 func MutationSuccessResponse(w http.ResponseWriter, message string)  {
 	response := struct {
 		Status		bool `json:"status"`

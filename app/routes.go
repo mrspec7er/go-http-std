@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/mrspec7er/go-http-std/app/auth"
 	"github.com/mrspec7er/go-http-std/app/cast"
 	"github.com/mrspec7er/go-http-std/app/director"
 	"github.com/mrspec7er/go-http-std/app/genre"
@@ -20,6 +21,7 @@ func loadRoutes() *chi.Mux {
 		w.Write([]byte("Hello There!"))
 	})
 
+	router.Route("/auth", auth.Routes)
 	router.Route("/movies", movie.Routes)
 	router.Route("/genres", genre.Routes)
 	router.Route("/directors", director.Routes)
