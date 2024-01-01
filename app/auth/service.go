@@ -71,9 +71,8 @@ func (s AuthService) SaveUser(req *UserInfo) (int, error) {
 		status = "ACTIVE"
 	}
 
-	user := &repository.User{Name: req.Name, Email: req.Email, Status: status, Role: "USER"}
-
-	err := user.Create()
+	s.user = repository.User{Name: req.Name, Email: req.Email, Status: status, Role: "USER"}
+	err := s.user.Create()
 	if err != nil {
 		return 500, errors.New("failed reading response body: " + err.Error())
 	}

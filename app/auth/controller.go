@@ -48,7 +48,9 @@ func (c *AuthController) HandleAuthCallback(w http.ResponseWriter, r *http.Reque
 func (c *AuthController) HandleGetUserInfo(w http.ResponseWriter, r *http.Request) {
 	message := "Authenticated Success"
 
-	utils.GetSuccessResponse(w, &message, nil, nil)
+	user := r.Context().Value("user")
+
+	utils.GetSuccessResponse(w, &message, user, nil)
 }
 
 func (c *AuthController) HandleLoginTemplate(w http.ResponseWriter, r *http.Request) {

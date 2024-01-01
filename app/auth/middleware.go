@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"fmt"
+	"context"
 	"net/http"
 
 	"github.com/mrspec7er/go-http-std/app/utils"
@@ -25,9 +25,7 @@ func (m AuthMiddleware) AuthenticatedUser(next http.Handler) http.Handler {
 			return
 		}
 
-		// TODO: Save user info to context
-		fmt.Println("USER_INFO", info)
-	
-		next.ServeHTTP(w, r)
+		ctx := context.WithValue(r.Context(), "user", &info)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
