@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -34,6 +35,36 @@ func (m AuthMiddleware) AuthenticatedUser(next http.Handler) http.Handler {
 
 		ctx := context.WithValue(r.Context(), "user", &info)
 		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func (m AuthMiddleware) AuthorizeUser(roles ...string) func(http.Handler) http.Handler {
+	return (func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			fmt.Println("ROLES", roles)
+			cookie, err := r.Cookie("accessToken")
+			if err != nil {
+				utils.InternalServerErrorHandler(w, 400, err)
+				return
+			}
+	
+			token := strings.Split(cookie.Value, " ")
+		
+			user, err := m.GetUserInfo(token[0], token[1])
+			if err != nil {
+				utils.InternalServerErrorHandler(w, 500, err)
+				return
+			}
+
+
+			if !slices.Contains(roles, user.Role) || user.Status != "ACTIVE" {
+				utils.UnauthorizeUser(w)
+				return
+			} 
+	
+			ctx := context.WithValue(r.Context(), "user", &user)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
 	})
 }
 
@@ -77,6 +108,8 @@ func (m AuthMiddleware) GetUserInfo(bearer string, accessToken string) (*reposit
 		if err != nil {
 			return nil, err
 		}
+
+		fmt.Println("USER_EMAIL: ", accessToken)
 
 		user, err := m.service.user.GetByEmail(result.Email)
 		if err != nil {

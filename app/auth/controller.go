@@ -42,6 +42,8 @@ func (c *AuthController) HandleGoogleAuthCallback(w http.ResponseWriter, r *http
 		return
 	}
 
+	fmt.Println("USER_DATA", *token)
+
 	status, err := c.service.SaveOauthUser(info)
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
