@@ -12,34 +12,34 @@ type AuthController struct {
 }
 
 const (
-	oauthStateGoogle = "google"
+	OauthStateGoogle = "google"
 )
 
 func (AuthController) HandleGoogleLogin(w http.ResponseWriter, r *http.Request) {
-	url := conf.AuthCodeURL(oauthStateGoogle)
+	url := conf.AuthCodeURL(OauthStateGoogle)
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
-func (c *AuthController) HandleAuthCallback(w http.ResponseWriter, r *http.Request) {
-	token, err := c.service.GetUserToken(r.FormValue("state"), r.FormValue("code"))
+func (c *AuthController) HandleGoogleAuthCallback(w http.ResponseWriter, r *http.Request) {
+	token, err := c.service.GetUserOauthToken(r.FormValue("state"), r.FormValue("code"))
 	if err != nil {
 		utils.InternalServerErrorHandler(w, 500, err)
 		return
 	}
 
-	info, err := c.service.GetUserInfo(*token)
+	info, err := c.service.GetUserGoogleInfo(*token)
 	if err != nil {
 		utils.InternalServerErrorHandler(w, 500, err)
 		return
 	}
 
-	status, err := c.service.SaveUser(info)
+	status, err := c.service.SaveOauthUser(info)
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
 		return
 	}
 	
-	tokenCookie := &http.Cookie{Name: "accessToken", Value: *token, HttpOnly: false}
+	tokenCookie := &http.Cookie{Name: "accessToken", Value: r.FormValue("state") + " " + *token, HttpOnly: false}
 	http.SetCookie(w, tokenCookie)
 
 	utils.SuccessMessageResponse(w, "Login Success")

@@ -37,8 +37,8 @@ func Initialization()  {
 	}
 }
 
-func (s AuthService) GetUserToken(state string, code string) (*string, error) {
-	if state != oauthStateGoogle {
+func (s AuthService) GetUserOauthToken(state string, code string) (*string, error) {
+	if state != OauthStateGoogle {
 		return nil, errors.New("invalid oauth state")
 	}
 	token, err := conf.Exchange(context.TODO(), code)
@@ -49,7 +49,7 @@ func (s AuthService) GetUserToken(state string, code string) (*string, error) {
 	return &token.AccessToken, nil
 }
 
-func (s AuthService) GetUserInfo(accessToken string) (*UserInfo, error) {
+func (s AuthService) GetUserGoogleInfo(accessToken string) (*UserInfo, error) {
 	response, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + accessToken)
 	if err != nil {
 		return nil, errors.New("failed getting user info: " + err.Error())
@@ -65,7 +65,7 @@ func (s AuthService) GetUserInfo(accessToken string) (*UserInfo, error) {
 	return userInfo, nil
 }
 
-func (s AuthService) SaveUser(req *UserInfo) (int, error) {
+func (s AuthService) SaveOauthUser(req *UserInfo) (int, error) {
 	status := "INACTIVE"
 	if req.VerifiedEmail {
 		status = "ACTIVE"

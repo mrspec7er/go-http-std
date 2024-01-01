@@ -11,7 +11,7 @@ func Routes(router chi.Router)  {
 	router.Get("/login", controller.HandleLoginTemplate)
 
 	router.Get("/login/google", controller.HandleGoogleLogin)
-	router.Get("/callback", controller.HandleAuthCallback)
+	router.Get("/callback", controller.HandleGoogleAuthCallback)
 	router.With(middleware.AuthenticatedUser).Get("/whoami", controller.HandleGetUserInfo)
 
 }
