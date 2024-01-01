@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -9,6 +10,13 @@ import (
 
 type AuthController struct {
 	service AuthService
+}
+
+type AuthPayload struct {
+	Email string `json:"email"`
+	Password string `json:"password"`
+	ConfirmPassword string `json:"confirmPassword"`
+	Token string `json:"token"`
 }
 
 const (
@@ -53,6 +61,47 @@ func (c *AuthController) HandleGetUserInfo(w http.ResponseWriter, r *http.Reques
 	utils.GetSuccessResponse(w, &message, user, nil)
 }
 
+func (c *AuthController) HandleSendUpdatePassword(w http.ResponseWriter, r *http.Request) {
+	var payload AuthPayload
+    if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+        utils.BadRequestHandler(w)
+        return
+    }
+
+	token, err := c.service.GeneratePasswordTokenServices(payload.Email)
+	if err != nil {
+        utils.BadRequestHandler(w)
+        return
+    }
+
+	fmt.Println("USER_TOKEN", *token)
+
+	// utils.SendUpdatePassword(token)
+
+	utils.SuccessMessageResponse(w, "Update Password Url sended to: " + payload.Email)
+}
+
+func (c *AuthController) HandleUpdatePassword(w http.ResponseWriter, r *http.Request) {
+	var payload AuthPayload
+    if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+        utils.BadRequestHandler(w)
+        return
+    }
+
+	if payload.Password != payload.ConfirmPassword {
+		utils.BadRequestHandler(w)
+        return
+	}
+
+	status, err := c.service.UpdatePasswordService(payload.Token, payload.Password)
+	if err != nil {
+        utils.InternalServerErrorHandler(w, status, err)
+        return
+    }
+
+	utils.SuccessMessageResponse(w, "Password Updated")
+}
+
 func (c *AuthController) HandleLoginTemplate(w http.ResponseWriter, r *http.Request) {
 	var htmlIndex = `
 		<html>
@@ -61,4 +110,23 @@ func (c *AuthController) HandleLoginTemplate(w http.ResponseWriter, r *http.Requ
 			</body>
 		</html>`
 	fmt.Fprintf(w, htmlIndex)
+}
+
+func (c *AuthController) HandleEmailLogin(w http.ResponseWriter, r *http.Request) {
+	var payload AuthPayload
+    if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+        utils.BadRequestHandler(w)
+        return
+    }
+
+	token, user, err := c.service.LoginService(payload.Email, payload.Password)
+	if err != nil {
+        utils.BadRequestHandler(w)
+        return
+    }
+
+	tokenCookie := &http.Cookie{Name: "accessToken", Value: r.FormValue("state") + " " + *token, HttpOnly: false}
+	http.SetCookie(w, tokenCookie)
+
+	utils.GetSuccessResponse(w, nil, user, nil)
 }

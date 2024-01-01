@@ -14,4 +14,8 @@ func Routes(router chi.Router)  {
 	router.Get("/callback", controller.HandleGoogleAuthCallback)
 	router.With(middleware.AuthenticatedUser).Get("/whoami", controller.HandleGetUserInfo)
 
+	router.Post("/send-update-password", controller.HandleSendUpdatePassword)
+	router.Post("/update-password", controller.HandleUpdatePassword)
+
+	router.Get("/login/email", controller.HandleEmailLogin)
 }

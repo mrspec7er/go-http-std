@@ -26,6 +26,12 @@ func (u *User) Create() (error) {
 	return  err
 }
 
+func (u *User) Update() (error) {
+	err := utils.DB.Updates(&u).Error
+
+	return  err
+}
+
 func (u *User) GetAll() ([]*User, error) {
 	users := []*User{}
 	err := utils.DB.Find(&users).Error
@@ -36,6 +42,12 @@ func (u *User) GetAll() ([]*User, error) {
 func (u *User) GetByID(id uint) (*User, error) {
 	u.ID = id
 	err := utils.DB.First(&u).Error
+
+	return u, err
+}
+
+func (u *User) GetByEmail(email string) (*User, error) {
+	err := utils.DB.Where("email = ?", email).First(&u).Error
 
 	return u, err
 }

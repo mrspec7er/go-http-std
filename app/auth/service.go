@@ -4,9 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
+	"reflect"
+	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/mrspec7er/go-http-std/app/repository"
+	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
@@ -78,4 +83,110 @@ func (s AuthService) SaveOauthUser(req *UserInfo) (int, error) {
 	}
 
 	return 201, nil
+}
+
+func (s AuthService) CreateUser(req *repository.User) (int, error) {
+	s.user = repository.User{Name: req.Name, Email: req.Email, Password: "UNFILLED", Status: "INACTIVE", Role: "USER"}
+
+	err := s.user.Create()
+	if err != nil {
+		return 500, err
+	}
+
+	return 200, nil
+}
+
+func (s AuthService) GeneratePasswordTokenServices(email string) (*string, error) {
+	user, err := s.user.GetByEmail(email)
+	if err != nil {
+		return  nil, err
+	}
+
+	fmt.Println("USER: ", user)
+
+	token, err := s.GenerateTokenService(user.ID, 1, "UPDATE_PASSWORD_SECRET")
+	if err != nil {
+		return  nil, err
+	}
+	
+	return token, nil
+}
+
+func (s AuthService) UpdatePasswordService(token string, password string) (int, error) {
+
+	payload, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+		_, ok := t.Method.(*jwt.SigningMethodHMAC)
+		if !ok {
+			return nil, errors.New("Failed to parse JWT token!") 
+		}
+
+		return []byte("UPDATE_PASSWORD_SECRET"), nil
+	})
+	if err != nil {
+		return 400, err
+	}
+
+	claims, ok := payload.Claims.(jwt.MapClaims)
+
+	if ok && payload.Valid {
+
+		encryptedPass, err := bcrypt.GenerateFromPassword([]byte(password), 11)
+		if err != nil {
+			return  400, err
+		}
+
+		id, ok := claims["id"].(float64)
+
+		if !ok {
+			return  500, errors.New("Failed to convert JWT payload")
+		}
+
+		fmt.Println("REFLECT_CLAIMS", reflect.TypeOf(claims["id"]))
+
+		s.user.ID = uint(id)
+		s.user.Password = string(encryptedPass)
+		s.user.Status = "ACTIVE"
+
+		err = s.user.Update()
+		if err != nil {
+			return  500, err
+		}
+	}
+
+	return 201, nil
+}
+
+func (s AuthService) GenerateTokenService(id uint, duration int, secret string) (*string, error)  {
+
+	payload := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id": id,
+		"exp": time.Now().Add(time.Hour * time.Duration(duration)).Unix(),
+	})
+
+	token, err := payload.SignedString([]byte(secret))
+	if err != nil {
+		return nil, err
+	}
+
+	return &token, nil
+}
+
+func (s AuthService) LoginService(email string, password string) (*string, *repository.User, error)  {
+
+	user, err := s.user.GetByEmail(email) 
+	if err != nil {
+		return nil, nil, err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		return nil, nil, err
+	}
+
+	token, err := s.GenerateTokenService(user.ID, 24, "AUTH_SECRET")
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return token, user, nil
 }
