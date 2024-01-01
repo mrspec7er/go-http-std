@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/mrspec7er/go-http-std/app/repository"
 	"github.com/mrspec7er/go-http-std/app/utils"
 )
 
@@ -36,9 +37,7 @@ func (m AuthMiddleware) AuthenticatedUser(next http.Handler) http.Handler {
 	})
 }
 
-func (m AuthMiddleware) GetUserInfo(bearer string, accessToken string) (*UserInfo, error) {
-	var info *UserInfo
-	var err error
+func (m AuthMiddleware) GetUserInfo(bearer string, accessToken string) (*repository.User, error) {
 
 	if bearer == DefaultAuth {
 		payload, err := jwt.Parse(accessToken, func(t *jwt.Token) (interface{}, error) {
@@ -54,36 +53,39 @@ func (m AuthMiddleware) GetUserInfo(bearer string, accessToken string) (*UserInf
 		}
 	
 		claims, ok := payload.Claims.(jwt.MapClaims)
-		if ok && payload.Valid {
-			email, ok := claims["email"].(string)
-
-			if !ok {
-				fmt.Println("TYPE: ", claims)
-				return nil, errors.New("Failed to parse token payload")
-			}
-	
-			user, err := m.service.user.GetByEmail(email)
-			if err != nil {
-				return nil, err
-			} 
-			status := false
-
-			if user.Status == "ACTIVE" {
-				status = true
-			}
-
-			return &UserInfo{Name: user.Name, Email: user.Email, VerifiedEmail: status}, nil
-		} else {
-			return nil, err
+		if !ok || !payload.Valid {
+			return nil, errors.New("Failed to encoded token payload")
 		}
+
+		email, ok := claims["email"].(string)
+
+		if !ok {
+			fmt.Println("TYPE: ", claims)
+			return nil, errors.New("Failed to parse token payload")
+		}
+
+		user, err := m.service.user.GetByEmail(email)
+		if err != nil {
+			return nil, err
+		} 
+
+		return user, nil
 	}
 
 	if bearer == OauthStateGoogle {
-		info, err = m.service.GetUserGoogleInfo(accessToken)
+		result, err := m.service.GetUserGoogleInfo(accessToken)
 		if err != nil {
-			return info, err
+			return nil, err
 		}
+
+		user, err := m.service.user.GetByEmail(result.Email)
+		if err != nil {
+			return nil, err
+		} 
+
+		return user, nil
 	}
 
-	return info, nil
+	return nil, errors.New("Failed Token Bearer")
+
 }

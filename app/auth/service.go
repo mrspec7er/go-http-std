@@ -124,26 +124,27 @@ func (s AuthService) UpdatePasswordService(token string, password string) (int, 
 
 	claims, ok := payload.Claims.(jwt.MapClaims)
 
-	if ok && payload.Valid {
+	if !ok || !payload.Valid {
+		return  500, err
+	}
 
-		encryptedPass, err := bcrypt.GenerateFromPassword([]byte(password), 11)
-		if err != nil {
-			return  400, err
-		}
+	encryptedPass, err := bcrypt.GenerateFromPassword([]byte(password), 11)
+	if err != nil {
+		return  400, err
+	}
 
-		email, ok := claims["email"].(string)
+	email, ok := claims["email"].(string)
 
-		if !ok {
-			return  500, errors.New("Failed to convert JWT payload")
-		}
-		
-		s.user.Password = string(encryptedPass)
-		s.user.Status = "ACTIVE"
+	if !ok {
+		return  500, errors.New("Failed to convert JWT payload")
+	}
+	
+	s.user.Password = string(encryptedPass)
+	s.user.Status = "ACTIVE"
 
-		err = s.user.Update(email)
-		if err != nil {
-			return  500, err
-		}
+	err = s.user.Update(email)
+	if err != nil {
+		return  500, err
 	}
 
 	return 201, nil
