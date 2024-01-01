@@ -26,8 +26,8 @@ func (u *User) Create() (error) {
 	return  err
 }
 
-func (u *User) Update() (error) {
-	err := utils.DB.Updates(&u).Error
+func (u *User) Update(email string) (error) {
+	err := utils.DB.Where(&User{Email: email}).Updates(&u).Error
 
 	return  err
 }

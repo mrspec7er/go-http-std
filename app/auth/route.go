@@ -17,5 +17,5 @@ func Routes(router chi.Router)  {
 	router.Post("/send-update-password", controller.HandleSendUpdatePassword)
 	router.Post("/update-password", controller.HandleUpdatePassword)
 
-	router.Get("/login/email", controller.HandleEmailLogin)
+	router.Post("/login/email", controller.HandleEmailLogin)
 }

@@ -20,6 +20,7 @@ type AuthPayload struct {
 }
 
 const (
+	DefaultAuth = "default"
 	OauthStateGoogle = "google"
 )
 
@@ -47,7 +48,7 @@ func (c *AuthController) HandleGoogleAuthCallback(w http.ResponseWriter, r *http
 		return
 	}
 	
-	tokenCookie := &http.Cookie{Name: "accessToken", Value: r.FormValue("state") + " " + *token, HttpOnly: false}
+	tokenCookie := &http.Cookie{Name: "accessToken", Value: r.FormValue("state") + " " + *token, HttpOnly: false, Path: "/"}
 	http.SetCookie(w, tokenCookie)
 
 	utils.SuccessMessageResponse(w, "Login Success")
@@ -125,7 +126,7 @@ func (c *AuthController) HandleEmailLogin(w http.ResponseWriter, r *http.Request
         return
     }
 
-	tokenCookie := &http.Cookie{Name: "accessToken", Value: r.FormValue("state") + " " + *token, HttpOnly: false}
+	tokenCookie := &http.Cookie{Name: "accessToken", Value: DefaultAuth + " " + *token, HttpOnly: false, Path: "/"}
 	http.SetCookie(w, tokenCookie)
 
 	utils.GetSuccessResponse(w, nil, user, nil)

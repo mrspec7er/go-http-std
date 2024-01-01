@@ -4,9 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
-	"reflect"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -102,9 +100,7 @@ func (s AuthService) GeneratePasswordTokenServices(email string) (*string, error
 		return  nil, err
 	}
 
-	fmt.Println("USER: ", user)
-
-	token, err := s.GenerateTokenService(user.ID, 1, "UPDATE_PASSWORD_SECRET")
+	token, err := s.GenerateTokenService(user.Email, 1, "UPDATE_PASSWORD_SECRET")
 	if err != nil {
 		return  nil, err
 	}
@@ -135,19 +131,16 @@ func (s AuthService) UpdatePasswordService(token string, password string) (int, 
 			return  400, err
 		}
 
-		id, ok := claims["id"].(float64)
+		email, ok := claims["email"].(string)
 
 		if !ok {
 			return  500, errors.New("Failed to convert JWT payload")
 		}
-
-		fmt.Println("REFLECT_CLAIMS", reflect.TypeOf(claims["id"]))
-
-		s.user.ID = uint(id)
+		
 		s.user.Password = string(encryptedPass)
 		s.user.Status = "ACTIVE"
 
-		err = s.user.Update()
+		err = s.user.Update(email)
 		if err != nil {
 			return  500, err
 		}
@@ -156,10 +149,10 @@ func (s AuthService) UpdatePasswordService(token string, password string) (int, 
 	return 201, nil
 }
 
-func (s AuthService) GenerateTokenService(id uint, duration int, secret string) (*string, error)  {
+func (s AuthService) GenerateTokenService(email string, duration int, secret string) (*string, error)  {
 
 	payload := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id": id,
+		"email": email,
 		"exp": time.Now().Add(time.Hour * time.Duration(duration)).Unix(),
 	})
 
@@ -183,7 +176,7 @@ func (s AuthService) LoginService(email string, password string) (*string, *repo
 		return nil, nil, err
 	}
 
-	token, err := s.GenerateTokenService(user.ID, 24, "AUTH_SECRET")
+	token, err := s.GenerateTokenService(user.Email, 24, "AUTH_SECRET")
 	if err != nil {
 		return nil, nil, err
 	}

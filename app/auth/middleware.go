@@ -2,9 +2,12 @@ package auth
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/mrspec7er/go-http-std/app/utils"
 )
 
@@ -16,7 +19,7 @@ func (m AuthMiddleware) AuthenticatedUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("accessToken")
 		if err != nil {
-			utils.InternalServerErrorHandler(w, 500, err)
+			utils.InternalServerErrorHandler(w, 400, err)
 			return
 		}
 
@@ -36,6 +39,44 @@ func (m AuthMiddleware) AuthenticatedUser(next http.Handler) http.Handler {
 func (m AuthMiddleware) GetUserInfo(bearer string, accessToken string) (*UserInfo, error) {
 	var info *UserInfo
 	var err error
+
+	if bearer == DefaultAuth {
+		payload, err := jwt.Parse(accessToken, func(t *jwt.Token) (interface{}, error) {
+			_, ok := t.Method.(*jwt.SigningMethodHMAC)
+			if !ok {
+				return nil, errors.New("Failed to parse JWT token!")
+			}
+			return []byte("AUTH_SECRET"), nil
+		})
+	
+		if err != nil {
+			return nil, err
+		}
+	
+		claims, ok := payload.Claims.(jwt.MapClaims)
+		if ok && payload.Valid {
+			email, ok := claims["email"].(string)
+
+			if !ok {
+				fmt.Println("TYPE: ", claims)
+				return nil, errors.New("Failed to parse token payload")
+			}
+	
+			user, err := m.service.user.GetByEmail(email)
+			if err != nil {
+				return nil, err
+			} 
+			status := false
+
+			if user.Status == "ACTIVE" {
+				status = true
+			}
+
+			return &UserInfo{Name: user.Name, Email: user.Email, VerifiedEmail: status}, nil
+		} else {
+			return nil, err
+		}
+	}
 
 	if bearer == OauthStateGoogle {
 		info, err = m.service.GetUserGoogleInfo(accessToken)
