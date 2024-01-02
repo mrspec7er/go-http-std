@@ -65,13 +65,13 @@ func (s *MovieService) Update(req *repository.Movie) (int, error) {
 }
 
 func (s *MovieService) UpdateThumbnail(file multipart.File, fileHeader *multipart.FileHeader, id uint) error {
+	s.RemoveMovieThumbnail(id)
 
 	err := os.MkdirAll("./assets/thumbnail", os.ModePerm)
 	if err != nil {
 		return err
 	}
 
-	// Create a new file in the uploads directory
 	dst, err := os.Create(fmt.Sprintf("./assets/thumbnail/%d_%s", time.Now().UnixNano(), fileHeader.Filename))
 	if err != nil {
 		return err
@@ -88,6 +88,20 @@ func (s *MovieService) UpdateThumbnail(file multipart.File, fileHeader *multipar
 	s.movie.Thumbnail = dst.Name()
 
 	s.movie.Update()
+	return nil
+}
+
+func (s *MovieService) RemoveMovieThumbnail(id uint) error {
+	movie, err := s.movie.GetByID(id)
+	if err != nil {
+		return err
+	}
+
+	err = os.Remove(movie.Thumbnail)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
