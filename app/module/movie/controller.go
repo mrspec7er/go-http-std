@@ -96,6 +96,38 @@ func (c *MovieController) HandlerUpdate(w http.ResponseWriter, r *http.Request) 
 	utils.MutationSuccessResponse(w, "Successfully insert new movie")
 }
 
+func (c *MovieController) HandlerUpdateThumbnail(w http.ResponseWriter, r *http.Request)  {
+	r.Body = http.MaxBytesReader(w, r.Body, utils.MAX_UPLOAD_SIZE)
+	if err := r.ParseMultipartForm(utils.MAX_UPLOAD_SIZE); err != nil {
+		http.Error(w, "The uploaded file is too big. Please choose an file that's less than 1MB in size", http.StatusBadRequest)
+		return
+	}
+
+	idStringify := r.FormValue("id")
+
+	file, fileHeader, err := r.FormFile("thumbnail")
+	if err != nil {
+		utils.InternalServerErrorHandler(w, 500, err)
+		return
+	}
+
+	defer file.Close()
+
+	id, err := strconv.ParseUint(idStringify, 10, 32)
+	if err != nil {
+		utils.BadRequestHandler(w)
+		return
+	}
+
+	err = c.service.UpdateThumbnail(file, fileHeader, uint(id))
+	if err != nil {
+		utils.InternalServerErrorHandler(w, 500, err)
+		return
+	}
+
+	utils.MutationSuccessResponse(w, "Successfully update thumbnail")
+}
+
 func HandlerDelete(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Delete a Movie")
 }

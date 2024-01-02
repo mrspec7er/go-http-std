@@ -11,5 +11,6 @@ func Routes(router chi.Router)  {
 	router.Get("/", controller.HandlerGetAll)	
 	router.Get("/{id}", controller.HandlerGetOne)
 	router.Put("/", controller.HandlerUpdate)
+	router.Put("/thumbnail", controller.HandlerUpdateThumbnail)
 	router.Delete("/{id}", HandlerDelete)
 }

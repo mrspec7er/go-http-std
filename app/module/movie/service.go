@@ -3,6 +3,10 @@ package movie
 import (
 	"errors"
 	"fmt"
+	"io"
+	"mime/multipart"
+	"os"
+	"time"
 
 	"github.com/mrspec7er/go-http-std/app/repository"
 	"gorm.io/gorm"
@@ -58,6 +62,33 @@ func (s *MovieService) Update(req *repository.Movie) (int, error) {
 	}
 
 	return 200, nil
+}
+
+func (s *MovieService) UpdateThumbnail(file multipart.File, fileHeader *multipart.FileHeader, id uint) error {
+
+	err := os.MkdirAll("./assets/thumbnail", os.ModePerm)
+	if err != nil {
+		return err
+	}
+
+	// Create a new file in the uploads directory
+	dst, err := os.Create(fmt.Sprintf("./assets/thumbnail/%d_%s", time.Now().UnixNano(), fileHeader.Filename))
+	if err != nil {
+		return err
+	}
+
+	defer dst.Close()
+
+	_, err = io.Copy(dst, file)
+	if err != nil {
+		return err
+	}
+
+	s.movie.ID = id
+	s.movie.Thumbnail = dst.Name()
+
+	s.movie.Update()
+	return nil
 }
 
 func (MovieService) Delete(id uint) {

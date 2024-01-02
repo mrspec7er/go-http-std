@@ -11,6 +11,7 @@ import (
 type Movie struct {
 	ID uint `json:"id" gorm:"primaryKey"`
 	Title string `json:"title" gorm:"index,priority:1; type:varchar(128)"`
+	Thumbnail string `json:"thumbnail" gorm:"type:text"`
 	Description string `json:"description" gorm:"type:text"`
 	ProductionCountry string `json:"productionCountry" gorm:"type:varchar(128)"`
 	ReleaseDate string `json:"releaseDate" gorm:"type:varchar(64)"`
