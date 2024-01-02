@@ -19,13 +19,8 @@ type AuthPayload struct {
 	Token string `json:"token"`
 }
 
-const (
-	DefaultAuth = "default"
-	OauthStateGoogle = "google"
-)
-
 func (AuthController) HandleGoogleLogin(w http.ResponseWriter, r *http.Request) {
-	url := conf.AuthCodeURL(OauthStateGoogle)
+	url := conf.AuthCodeURL(utils.OauthStateGoogle)
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
@@ -42,8 +37,6 @@ func (c *AuthController) HandleGoogleAuthCallback(w http.ResponseWriter, r *http
 		return
 	}
 
-	fmt.Println("USER_DATA", *token)
-
 	status, err := c.service.SaveOauthUser(info)
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
@@ -54,14 +47,6 @@ func (c *AuthController) HandleGoogleAuthCallback(w http.ResponseWriter, r *http
 	http.SetCookie(w, tokenCookie)
 
 	utils.SuccessMessageResponse(w, "Login Success")
-}
-
-func (c *AuthController) HandleGetUserInfo(w http.ResponseWriter, r *http.Request) {
-	message := "Authenticated Success"
-
-	user := r.Context().Value("user")
-
-	utils.GetSuccessResponse(w, &message, user, nil)
 }
 
 func (c *AuthController) HandleSendUpdatePassword(w http.ResponseWriter, r *http.Request) {
@@ -128,7 +113,7 @@ func (c *AuthController) HandleEmailLogin(w http.ResponseWriter, r *http.Request
         return
     }
 
-	tokenCookie := &http.Cookie{Name: "accessToken", Value: DefaultAuth + " " + *token, HttpOnly: false, Path: "/"}
+	tokenCookie := &http.Cookie{Name: "accessToken", Value: utils.DefaultAuth + " " + *token, HttpOnly: false, Path: "/"}
 	http.SetCookie(w, tokenCookie)
 
 	utils.GetSuccessResponse(w, nil, user, nil)

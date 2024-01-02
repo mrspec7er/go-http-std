@@ -60,6 +60,14 @@ func (c *UserController) HandlerGetOne(w http.ResponseWriter, r *http.Request) {
 	utils.GetSuccessResponse(w, nil, result, nil)
 }
 
+func (c *UserController) HandleGetUserInfo(w http.ResponseWriter, r *http.Request) {
+	message := "Authenticated Success"
+
+	user := r.Context().Value("user")
+
+	utils.GetSuccessResponse(w, &message, user, nil)
+}
+
 func HandlerUpdate(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Update a Movie")
 }

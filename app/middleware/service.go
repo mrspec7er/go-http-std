@@ -1,20 +1,20 @@
-package auth
+package middleware
 
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"slices"
 	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/mrspec7er/go-http-std/app/auth"
 	"github.com/mrspec7er/go-http-std/app/repository"
 	"github.com/mrspec7er/go-http-std/app/utils"
 )
 
 type AuthMiddleware struct {
-	service AuthService
+	service auth.AuthService
 }
 
 func (m AuthMiddleware) AuthenticatedUser(next http.Handler) http.Handler {
@@ -41,7 +41,6 @@ func (m AuthMiddleware) AuthenticatedUser(next http.Handler) http.Handler {
 func (m AuthMiddleware) AuthorizeUser(roles ...string) func(http.Handler) http.Handler {
 	return (func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("ROLES", roles)
 			cookie, err := r.Cookie("accessToken")
 			if err != nil {
 				utils.InternalServerErrorHandler(w, 400, err)
@@ -70,7 +69,7 @@ func (m AuthMiddleware) AuthorizeUser(roles ...string) func(http.Handler) http.H
 
 func (m AuthMiddleware) GetUserInfo(bearer string, accessToken string) (*repository.User, error) {
 
-	if bearer == DefaultAuth {
+	if bearer == utils.DefaultAuth {
 		payload, err := jwt.Parse(accessToken, func(t *jwt.Token) (interface{}, error) {
 			_, ok := t.Method.(*jwt.SigningMethodHMAC)
 			if !ok {
@@ -91,11 +90,10 @@ func (m AuthMiddleware) GetUserInfo(bearer string, accessToken string) (*reposit
 		email, ok := claims["email"].(string)
 
 		if !ok {
-			fmt.Println("TYPE: ", claims)
 			return nil, errors.New("Failed to parse token payload")
 		}
 
-		user, err := m.service.user.GetByEmail(email)
+		user, err := m.service.FindUserByEmail(email)
 		if err != nil {
 			return nil, err
 		} 
@@ -103,15 +101,13 @@ func (m AuthMiddleware) GetUserInfo(bearer string, accessToken string) (*reposit
 		return user, nil
 	}
 
-	if bearer == OauthStateGoogle {
+	if bearer == utils.OauthStateGoogle {
 		result, err := m.service.GetUserGoogleInfo(accessToken)
 		if err != nil {
 			return nil, err
 		}
 
-		fmt.Println("USER_EMAIL: ", accessToken)
-
-		user, err := m.service.user.GetByEmail(result.Email)
+		user, err := m.service.FindUserByEmail(result.Email)
 		if err != nil {
 			return nil, err
 		} 

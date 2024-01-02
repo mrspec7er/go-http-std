@@ -9,6 +9,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/mrspec7er/go-http-std/app/repository"
+	"github.com/mrspec7er/go-http-std/app/utils"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -41,7 +42,7 @@ func Initialization()  {
 }
 
 func (s AuthService) GetUserOauthToken(state string, code string) (*string, error) {
-	if state != OauthStateGoogle {
+	if state != utils.OauthStateGoogle {
 		return nil, errors.New("invalid oauth state")
 	}
 	token, err := conf.Exchange(context.TODO(), code)
@@ -183,4 +184,13 @@ func (s AuthService) LoginService(email string, password string) (*string, *repo
 	}
 
 	return token, user, nil
+}
+
+func (s AuthService) FindUserByEmail(email string) (*repository.User, error) {
+	user, err := s.user.GetByEmail(email) 
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
