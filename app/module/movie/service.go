@@ -6,6 +6,7 @@ import (
 	"io"
 	"mime/multipart"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/mrspec7er/go-http-std/app/repository"
@@ -84,8 +85,9 @@ func (s *MovieService) UpdateThumbnail(file multipart.File, fileHeader *multipar
 		return err
 	}
 
+	thumbnailUrl := strings.TrimPrefix(dst.Name(), ".")
 	s.movie.ID = id
-	s.movie.Thumbnail = dst.Name()
+	s.movie.Thumbnail = thumbnailUrl
 
 	s.movie.Update()
 	return nil
@@ -97,7 +99,8 @@ func (s *MovieService) RemoveMovieThumbnail(id uint) error {
 		return err
 	}
 
-	err = os.Remove(movie.Thumbnail)
+	dst := "." + movie.Thumbnail
+	err = os.Remove(dst)
 	if err != nil {
 		return err
 	}
