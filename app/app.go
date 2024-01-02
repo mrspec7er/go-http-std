@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/mrspec7er/go-http-std/app/auth"
+	"github.com/mrspec7er/go-http-std/app/module/auth"
 	"github.com/mrspec7er/go-http-std/app/repository"
 	"github.com/mrspec7er/go-http-std/app/utils"
 )

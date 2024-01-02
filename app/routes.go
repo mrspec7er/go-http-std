@@ -5,12 +5,12 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/mrspec7er/go-http-std/app/auth"
-	"github.com/mrspec7er/go-http-std/app/cast"
-	"github.com/mrspec7er/go-http-std/app/director"
-	"github.com/mrspec7er/go-http-std/app/genre"
-	"github.com/mrspec7er/go-http-std/app/movie"
-	"github.com/mrspec7er/go-http-std/app/user"
+	"github.com/mrspec7er/go-http-std/app/module/auth"
+	"github.com/mrspec7er/go-http-std/app/module/cast"
+	"github.com/mrspec7er/go-http-std/app/module/director"
+	"github.com/mrspec7er/go-http-std/app/module/genre"
+	"github.com/mrspec7er/go-http-std/app/module/movie"
+	"github.com/mrspec7er/go-http-std/app/module/user"
 )
 
 func loadRoutes() *chi.Mux {
