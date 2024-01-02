@@ -10,6 +10,7 @@ import (
 	"github.com/mrspec7er/go-http-std/app/module/director"
 	"github.com/mrspec7er/go-http-std/app/module/genre"
 	"github.com/mrspec7er/go-http-std/app/module/movie"
+	"github.com/mrspec7er/go-http-std/app/module/photo"
 	"github.com/mrspec7er/go-http-std/app/module/user"
 )
 
@@ -28,6 +29,7 @@ func loadRoutes() *chi.Mux {
 	router.Route("/genres", genre.Routes)
 	router.Route("/directors", director.Routes)
 	router.Route("/casts", cast.Routes)
+	router.Route("/photos", photo.Routes)
 	router.Route("/users", user.Routes)
 
 	return router

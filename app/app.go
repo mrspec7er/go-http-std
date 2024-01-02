@@ -31,6 +31,7 @@ func (a *App) Start(ctx context.Context) error {
 		&repository.User{}, 
 		&repository.Director{},
 		&repository.Cast{},
+		&repository.Photo{},
 	)
 	
 	server := &http.Server{

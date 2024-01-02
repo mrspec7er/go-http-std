@@ -14,7 +14,7 @@ type Cast struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 	// Many 2 many relation
-	Movies *[]Movie `json:"movies" gorm:"many2many:cast_movies;"`
+	Movies []*Movie `json:"movies" gorm:"many2many:cast_movies;"`
 }
 
 func (c *Cast) Create() (error) {

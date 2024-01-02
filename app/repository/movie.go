@@ -30,7 +30,9 @@ type Movie struct {
 	DirectorID uint `json:"directorId"`
 	Director *Director `json:"director" gorm:"constraint:OnDelete:SET NULL"`
 	// Many 2 many relation
-	Casts *[]Cast `json:"casts" gorm:"many2many:cast_movies;"`
+	Casts []*Cast `json:"casts" gorm:"many2many:cast_movies;"`
+	// One 2 many relation
+	Photos []*Photo `json:"photos" gorm:"constraint:OnDelete:SET NULL"`
 }
 
 func (m *Movie) Create() (error) {

@@ -14,7 +14,7 @@ type Director struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 	// Has many relation
-	Movies *[]Movie `json:"movies"`
+	Movies []*Movie `json:"movies"`
 }
 
 func (d *Director) Create() (error) {
