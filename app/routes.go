@@ -21,6 +21,8 @@ func loadRoutes() *chi.Mux {
 		w.Write([]byte("Hello There!"))
 	})
 
+	router.Handle("/assets/*", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
+
 	router.Route("/auth", auth.Routes)
 	router.Route("/movies", movie.Routes)
 	router.Route("/genres", genre.Routes)
