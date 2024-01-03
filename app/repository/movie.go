@@ -35,13 +35,13 @@ type Movie struct {
 	Photos []*Photo `json:"photos" gorm:"constraint:OnDelete:SET NULL"`
 }
 
-func (m *Movie) Create() (error) {
-	err := utils.DB.Create(&m).Error
+func (r *Movie) Create() (error) {
+	err := utils.DB.Create(&r).Error
 
 	return  err
 }
 
-func (m *Movie) GetAll(offset int, limit int, keyword string) ([]*Movie, *int64, error) {
+func (r *Movie) GetAll(offset int, limit int, keyword string) ([]*Movie, *int64, error) {
 	movies := []*Movie{}
 	var count int64
 
@@ -54,24 +54,24 @@ func (m *Movie) GetAll(offset int, limit int, keyword string) ([]*Movie, *int64,
 	return movies, &count, err
 }
 
-func (m *Movie) GetByID(id uint) (*Movie, error) {
-	m.ID = id
-	err := utils.DB.Preload("Genre").Preload("Director").Preload("Casts").First(&m).Error
+func (r *Movie) GetByID(id uint) (*Movie, error) {
+	r.ID = id
+	err := utils.DB.Preload("Genre").Preload("Director").Preload("Casts").First(&r).Error
 
-	return m, err
+	return r, err
 }
 
-func (m *Movie) Update() (error) {
-	err := utils.DB.Updates(&m).Error
+func (r *Movie) Update() (error) {
+	err := utils.DB.Updates(&r).Error
 	return  err
 }
 
-func (m *Movie) UpdateModelAndAssociation() (error) {
-	err := utils.DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&m).Error
+func (r *Movie) UpdateModelAndAssociation() (error) {
+	err := utils.DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&r).Error
 	return  err
 }
 
-func (m *Movie) UpdateAssociation() (error) {
-	res := utils.DB.Model(&m).Association("Casts").Replace(m.Casts)
+func (r *Movie) UpdateAssociation() (error) {
+	res := utils.DB.Model(&r).Association("Casts").Replace(r.Casts)
 	return  res
 }

@@ -19,35 +19,35 @@ type Photo struct {
 	Movie *Movie `json:"movie"`
 }
 
-func (p *Photo) BulkCreate(photos []*Photo) (error) {
+func (r *Photo) BulkCreate(photos []*Photo) (error) {
 	err := utils.DB.Create(&photos).Error
 
 	return  err
 }
 
-func (p *Photo) GetByMovieId(movieId uint) ([]*Photo, error) {
+func (r *Photo) GetByMovieId(movieId uint) ([]*Photo, error) {
 	photos := []*Photo{}
 	err := utils.DB.Where("movie_id = ?", movieId).Find(&photos).Error
 
 	return photos, err
 }
 
-func (p *Photo) GetByID(id uint) (*Photo, error) {
-	p.ID = id
-	err := utils.DB.Preload("Movies").First(&p).Error
+func (r *Photo) GetByID(id uint) (*Photo, error) {
+	r.ID = id
+	err := utils.DB.Preload("Movies").First(&r).Error
 
-	return p, err
+	return r, err
 }
 
-func (p *Photo) DeleteByID(id uint) (*Photo, error) {
-	p.ID = id
-	err := utils.DB.Delete(&p).Error
+func (r *Photo) DeleteByID(id uint) (*Photo, error) {
+	r.ID = id
+	err := utils.DB.Delete(&r).Error
 
-	return p, err
+	return r, err
 }
 
-func (p *Photo) DeleteByMovie(movieId uint) (error) {
-	err := utils.DB.Where("movie_id = ?", movieId).Delete(&p).Error
+func (r *Photo) DeleteByMovie(movieId uint) (error) {
+	err := utils.DB.Where("movie_id = ?", movieId).Delete(&r).Error
 
 	return err
 }

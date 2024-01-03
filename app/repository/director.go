@@ -17,22 +17,22 @@ type Director struct {
 	Movies []*Movie `json:"movies"`
 }
 
-func (d *Director) Create() (error) {
-	err := utils.DB.Create(&d).Error
+func (r *Director) Create() (error) {
+	err := utils.DB.Create(&r).Error
 
 	return  err
 }
 
-func (d *Director) GetAll() ([]*Director, error) {
+func (r *Director) GetAll() ([]*Director, error) {
 	directors := []*Director{}
 	err := utils.DB.Preload("Movies").Find(&directors).Error
 
 	return directors, err
 }
 
-func (d *Director) GetByID(id uint) (*Director, error) {
-	d.ID = id
-	err := utils.DB.Preload("Movies").First(&d).Error
+func (r *Director) GetByID(id uint) (*Director, error) {
+	r.ID = id
+	err := utils.DB.Preload("Movies").First(&r).Error
 
-	return d, err
+	return r, err
 }

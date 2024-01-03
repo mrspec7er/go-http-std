@@ -20,34 +20,34 @@ type User struct {
 	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 }
 
-func (u *User) Create() (error) {
-	err := utils.DB.Clauses(clause.OnConflict{DoNothing: true}).Create(&u).Error
+func (r *User) Create() (error) {
+	err := utils.DB.Clauses(clause.OnConflict{DoNothing: true}).Create(&r).Error
 
 	return  err
 }
 
-func (u *User) Update(email string) (error) {
-	err := utils.DB.Where(&User{Email: email}).Updates(&u).Error
+func (r *User) Update(email string) (error) {
+	err := utils.DB.Where(&User{Email: email}).Updates(&r).Error
 
 	return  err
 }
 
-func (u *User) GetAll() ([]*User, error) {
+func (r *User) GetAll() ([]*User, error) {
 	users := []*User{}
 	err := utils.DB.Find(&users).Error
 
 	return users, err
 }
 
-func (u *User) GetByID(id uint) (*User, error) {
-	u.ID = id
-	err := utils.DB.First(&u).Error
+func (r *User) GetByID(id uint) (*User, error) {
+	r.ID = id
+	err := utils.DB.First(&r).Error
 
-	return u, err
+	return r, err
 }
 
-func (u *User) GetByEmail(email string) (*User, error) {
-	err := utils.DB.Where("email = ?", email).First(&u).Error
+func (r *User) GetByEmail(email string) (*User, error) {
+	err := utils.DB.Where("email = ?", email).First(&r).Error
 
-	return u, err
+	return r, err
 }
