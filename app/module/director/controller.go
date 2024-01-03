@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/mrspec7er/go-http-std/app/repository"
+	"github.com/mrspec7er/go-http-std/app/model"
 	"github.com/mrspec7er/go-http-std/app/utils"
 )
 
@@ -16,7 +16,7 @@ type DirectorController struct {
 }
 
 func(c *DirectorController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
-	var director repository.Director
+	var director model.Director
     if err := json.NewDecoder(r.Body).Decode(&director); err != nil {
         utils.BadRequestHandler(w)
         return

@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/mrspec7er/go-http-std/app/repository"
+	"github.com/mrspec7er/go-http-std/app/model"
 	"github.com/mrspec7er/go-http-std/app/utils"
 )
 
@@ -17,7 +17,7 @@ type UserController struct {
 }
 
 func(c *UserController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
-	var user repository.User
+	var user model.User
     if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
         utils.BadRequestHandler(w)
         return

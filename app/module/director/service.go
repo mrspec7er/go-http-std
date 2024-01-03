@@ -4,15 +4,15 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/mrspec7er/go-http-std/app/repository"
+	"github.com/mrspec7er/go-http-std/app/model"
 	"gorm.io/gorm"
 )
 
 type DirectorService struct {
-	director repository.Director
+	director model.Director
 }
 
-func (s *DirectorService) Create(req *repository.Director) (int, error) {
+func (s *DirectorService) Create(req *model.Director) (int, error) {
 	s.director = *req
 
 	err := s.director.Create()
@@ -23,7 +23,7 @@ func (s *DirectorService) Create(req *repository.Director) (int, error) {
 	return 200, nil
 }
 
-func (s *DirectorService) GetAll() ([]*repository.Director, int, error) {
+func (s *DirectorService) GetAll() ([]*model.Director, int, error) {
 	result, err := s.director.GetAll()
 
 	if err != nil {
@@ -33,7 +33,7 @@ func (s *DirectorService) GetAll() ([]*repository.Director, int, error) {
 	return result, 200, nil
 }
 
-func (s *DirectorService) GetOne(id uint) (*repository.Director, int, error) {
+func (s *DirectorService) GetOne(id uint) (*model.Director, int, error) {
 	result, err := s.director.GetByID(id)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return result, 400, err
@@ -45,7 +45,7 @@ func (s *DirectorService) GetOne(id uint) (*repository.Director, int, error) {
 	return result, 200, nil
 }
 
-func (DirectorService) Update(director repository.Director) {
+func (DirectorService) Update(director model.Director) {
 	fmt.Println("Update a director")
 }
 

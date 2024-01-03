@@ -4,15 +4,15 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/mrspec7er/go-http-std/app/repository"
+	"github.com/mrspec7er/go-http-std/app/model"
 	"gorm.io/gorm"
 )
 
 type CastService struct {
-	cast repository.Cast
+	cast model.Cast
 }
 
-func (s *CastService) Create(req *repository.Cast) (int, error) {
+func (s *CastService) Create(req *model.Cast) (int, error) {
 	s.cast = *req
 
 	err := s.cast.Create()
@@ -23,7 +23,7 @@ func (s *CastService) Create(req *repository.Cast) (int, error) {
 	return 200, nil
 }
 
-func (s *CastService) GetAll() ([]*repository.Cast, int, error) {
+func (s *CastService) GetAll() ([]*model.Cast, int, error) {
 	result, err := s.cast.GetAll()
 
 	if err != nil {
@@ -33,7 +33,7 @@ func (s *CastService) GetAll() ([]*repository.Cast, int, error) {
 	return result, 200, nil
 }
 
-func (s *CastService) GetOne(id uint) (*repository.Cast, int, error) {
+func (s *CastService) GetOne(id uint) (*model.Cast, int, error) {
 
 	result, err := s.cast.GetByID(id)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -46,7 +46,7 @@ func (s *CastService) GetOne(id uint) (*repository.Cast, int, error) {
 	return result, 200, nil
 }
 
-func (CastService) Update(cast repository.Cast) {
+func (CastService) Update(cast model.Cast) {
 	fmt.Println("Update a cast")
 }
 

@@ -9,15 +9,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mrspec7er/go-http-std/app/repository"
+	"github.com/mrspec7er/go-http-std/app/model"
 	"gorm.io/gorm"
 )
 
 type MovieService struct {
-	movie repository.Movie
+	movie model.Movie
 }
 
-func (s *MovieService) Create(req *repository.Movie) (int, error) {
+func (s *MovieService) Create(req *model.Movie) (int, error) {
 	s.movie = *req
 	err := s.movie.Create()
 	if err != nil {
@@ -27,7 +27,7 @@ func (s *MovieService) Create(req *repository.Movie) (int, error) {
 	return 200, nil
 }
 
-func (s *MovieService) GetAll(page int, limit int, keyword string) ([]*repository.Movie, *int64, int, error) {
+func (s *MovieService) GetAll(page int, limit int, keyword string) ([]*model.Movie, *int64, int, error) {
 
 	result, count, err := s.movie.GetAll(page -1, limit, keyword)
 
@@ -38,7 +38,7 @@ func (s *MovieService) GetAll(page int, limit int, keyword string) ([]*repositor
 	return result, count, 200, nil
 }
 
-func (s *MovieService) GetOne(id uint) (*repository.Movie, int, error) {
+func (s *MovieService) GetOne(id uint) (*model.Movie, int, error) {
 	result, err := s.movie.GetByID(id)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return result, 400, err
@@ -51,7 +51,7 @@ func (s *MovieService) GetOne(id uint) (*repository.Movie, int, error) {
 	return result, 200, nil
 }
 
-func (s *MovieService) Update(req *repository.Movie) (int, error) {
+func (s *MovieService) Update(req *model.Movie) (int, error) {
 	s.movie = *req
 	err := s.movie.Update()
 	if errors.Is(err, gorm.ErrRecordNotFound) {

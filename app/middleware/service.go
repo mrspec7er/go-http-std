@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/mrspec7er/go-http-std/app/model"
 	"github.com/mrspec7er/go-http-std/app/module/auth"
-	"github.com/mrspec7er/go-http-std/app/repository"
 	"github.com/mrspec7er/go-http-std/app/utils"
 )
 
@@ -67,7 +67,7 @@ func (m AuthMiddleware) AuthorizeUser(roles ...string) func(http.Handler) http.H
 	})
 }
 
-func (m AuthMiddleware) GetUserInfo(bearer string, accessToken string) (*repository.User, error) {
+func (m AuthMiddleware) GetUserInfo(bearer string, accessToken string) (*model.User, error) {
 
 	if bearer == utils.DefaultAuth {
 		payload, err := jwt.Parse(accessToken, func(t *jwt.Token) (interface{}, error) {

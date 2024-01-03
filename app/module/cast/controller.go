@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/mrspec7er/go-http-std/app/repository"
+	"github.com/mrspec7er/go-http-std/app/model"
 	"github.com/mrspec7er/go-http-std/app/utils"
 )
 
@@ -17,7 +17,7 @@ type CastController struct {
 }
 
 func(c *CastController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
-	var cast repository.Cast
+	var cast model.Cast
     if err := json.NewDecoder(r.Body).Decode(&cast); err != nil {
         utils.BadRequestHandler(w)
         return

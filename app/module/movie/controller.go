@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/mrspec7er/go-http-std/app/repository"
+	"github.com/mrspec7er/go-http-std/app/model"
 	"github.com/mrspec7er/go-http-std/app/utils"
 )
 
@@ -16,7 +16,7 @@ type MovieController struct {
 }
 
 func(c *MovieController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
-	var movie repository.Movie
+	var movie model.Movie
     if err := json.NewDecoder(r.Body).Decode(&movie); err != nil {
         utils.BadRequestHandler(w)
         return
@@ -81,7 +81,7 @@ func (c *MovieController) HandlerGetOne(w http.ResponseWriter, r *http.Request) 
 }
 
 func (c *MovieController) HandlerUpdate(w http.ResponseWriter, r *http.Request) {
-	var movie repository.Movie
+	var movie model.Movie
     if err := json.NewDecoder(r.Body).Decode(&movie); err != nil || movie.ID == 0 {
         utils.BadRequestHandler(w)
         return

@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/mrspec7er/go-http-std/app/repository"
+	"github.com/mrspec7er/go-http-std/app/model"
 	"github.com/mrspec7er/go-http-std/app/utils"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/oauth2"
@@ -16,7 +16,7 @@ import (
 )
 
 type AuthService struct {
-	user repository.User
+	user model.User
 }
 
 type UserInfo struct {
@@ -75,7 +75,7 @@ func (s AuthService) SaveOauthUser(req *UserInfo) (int, error) {
 		status = "ACTIVE"
 	}
 
-	s.user = repository.User{Name: req.Name, Email: req.Email, Status: status, Role: "USER"}
+	s.user = model.User{Name: req.Name, Email: req.Email, Status: status, Role: "USER"}
 	err := s.user.Create()
 	if err != nil {
 		return 500, errors.New("failed reading response body: " + err.Error())
@@ -84,8 +84,8 @@ func (s AuthService) SaveOauthUser(req *UserInfo) (int, error) {
 	return 201, nil
 }
 
-func (s AuthService) CreateUser(req *repository.User) (int, error) {
-	s.user = repository.User{Name: req.Name, Email: req.Email, Password: "UNFILLED", Status: "INACTIVE", Role: "USER"}
+func (s AuthService) CreateUser(req *model.User) (int, error) {
+	s.user = model.User{Name: req.Name, Email: req.Email, Password: "UNFILLED", Status: "INACTIVE", Role: "USER"}
 
 	err := s.user.Create()
 	if err != nil {
@@ -166,7 +166,7 @@ func (s AuthService) GenerateTokenService(email string, duration int, secret str
 	return &token, nil
 }
 
-func (s AuthService) LoginService(email string, password string) (*string, *repository.User, error)  {
+func (s AuthService) LoginService(email string, password string) (*string, *model.User, error)  {
 
 	user, err := s.user.GetByEmail(email) 
 	if err != nil {
@@ -186,7 +186,7 @@ func (s AuthService) LoginService(email string, password string) (*string, *repo
 	return token, user, nil
 }
 
-func (s AuthService) FindUserByEmail(email string) (*repository.User, error) {
+func (s AuthService) FindUserByEmail(email string) (*model.User, error) {
 	user, err := s.user.GetByEmail(email) 
 	if err != nil {
 		return nil, err

@@ -8,14 +8,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mrspec7er/go-http-std/app/repository"
+	"github.com/mrspec7er/go-http-std/app/model"
 )
 
 type PhotoService struct {
-	photo repository.Photo
+	photo model.Photo
 }
 
-func (s *PhotoService) Creates(req []*repository.Photo) (int, error) {
+func (s *PhotoService) Creates(req []*model.Photo) (int, error) {
 
 	err := s.photo.BulkCreate(req)
 	if err != nil {
@@ -25,8 +25,8 @@ func (s *PhotoService) Creates(req []*repository.Photo) (int, error) {
 	return 200, nil
 }
 
-func (s *PhotoService) UploadPhoto(files []*multipart.FileHeader, movieId uint) ([]*repository.Photo, error) {
-	photos := []*repository.Photo{}
+func (s *PhotoService) UploadPhoto(files []*multipart.FileHeader, movieId uint) ([]*model.Photo, error) {
+	photos := []*model.Photo{}
 
 	for _, fileHeader := range files {
 			err := os.MkdirAll("./assets/photos", os.ModePerm)
@@ -52,13 +52,13 @@ func (s *PhotoService) UploadPhoto(files []*multipart.FileHeader, movieId uint) 
 		}
 
 		photoUrl := strings.TrimPrefix(dst.Name(), ".")
-		photos = append(photos, &repository.Photo{Name: fileHeader.Filename, URL: photoUrl, MovieID: movieId})
+		photos = append(photos, &model.Photo{Name: fileHeader.Filename, URL: photoUrl, MovieID: movieId})
 	}
 
 	return photos, nil
 }
 
-func (s *PhotoService) GetByMovie(movieId uint) ([]*repository.Photo, error) {
+func (s *PhotoService) GetByMovie(movieId uint) ([]*model.Photo, error) {
 	result, err := s.photo.GetByMovieId(movieId)
 
 	if err != nil {

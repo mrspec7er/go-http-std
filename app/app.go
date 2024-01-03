@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/mrspec7er/go-http-std/app/model"
 	"github.com/mrspec7er/go-http-std/app/module/auth"
-	"github.com/mrspec7er/go-http-std/app/repository"
 	"github.com/mrspec7er/go-http-std/app/utils"
 )
 
@@ -26,12 +26,12 @@ func (a *App) Start(ctx context.Context) error {
 	auth.Initialization()
 	
 	utils.DB.AutoMigrate(
-		&repository.Movie{}, 
-		&repository.Genre{}, 
-		&repository.User{}, 
-		&repository.Director{},
-		&repository.Cast{},
-		&repository.Photo{},
+		&model.Movie{}, 
+		&model.Genre{}, 
+		&model.User{}, 
+		&model.Director{},
+		&model.Cast{},
+		&model.Photo{},
 	)
 	
 	server := &http.Server{

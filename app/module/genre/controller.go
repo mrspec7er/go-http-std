@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/mrspec7er/go-http-std/app/repository"
+	"github.com/mrspec7er/go-http-std/app/model"
 	"github.com/mrspec7er/go-http-std/app/utils"
 )
 
@@ -16,7 +16,7 @@ type GenreController struct {
 }
 
 func(c *GenreController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
-	var genre repository.Genre
+	var genre model.Genre
     if err := json.NewDecoder(r.Body).Decode(&genre); err != nil {
         utils.BadRequestHandler(w)
         return

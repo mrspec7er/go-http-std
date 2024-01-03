@@ -4,15 +4,15 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/mrspec7er/go-http-std/app/repository"
+	"github.com/mrspec7er/go-http-std/app/model"
 	"gorm.io/gorm"
 )
 
 type GenreService struct {
-	genre repository.Genre
+	genre model.Genre
 }
 
-func (s *GenreService) Create(req *repository.Genre) (int, error) {
+func (s *GenreService) Create(req *model.Genre) (int, error) {
 	s.genre = *req
 	err := s.genre.Create()
 	if err != nil {
@@ -22,7 +22,7 @@ func (s *GenreService) Create(req *repository.Genre) (int, error) {
 	return 200, nil
 }
 
-func (s *GenreService) GetAll() ([]*repository.Genre, int, error) {
+func (s *GenreService) GetAll() ([]*model.Genre, int, error) {
 
 	result, err := s.genre.GetAll()
 
@@ -33,7 +33,7 @@ func (s *GenreService) GetAll() ([]*repository.Genre, int, error) {
 	return result, 200, nil
 }
 
-func (s *GenreService) GetOne(id uint) (*repository.Genre, int, error) {
+func (s *GenreService) GetOne(id uint) (*model.Genre, int, error) {
 	s.genre.ID = id
 
 	result, err := s.genre.GetByID(id)
@@ -47,7 +47,7 @@ func (s *GenreService) GetOne(id uint) (*repository.Genre, int, error) {
 	return result, 200, nil
 }
 
-func (GenreService) Update(genre repository.Genre) {
+func (GenreService) Update(genre model.Genre) {
 	fmt.Println("Update a genre")
 }
 
