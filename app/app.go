@@ -24,18 +24,18 @@ func (a *App) Start(ctx context.Context) error {
 	utils.DBConnection()
 
 	auth.Initialization()
-	
+
 	utils.DB.AutoMigrate(
-		&model.Movie{}, 
-		&model.Genre{}, 
-		&model.User{}, 
+		&model.Movie{},
+		&model.Genre{},
+		&model.User{},
 		&model.Director{},
 		&model.Cast{},
 		&model.Photo{},
 	)
-	
+
 	server := &http.Server{
-		Addr: ":8080",
+		Addr:    ":8080",
 		Handler: a.router,
 	}
 
@@ -43,7 +43,6 @@ func (a *App) Start(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	
+
 	return nil
 }
-

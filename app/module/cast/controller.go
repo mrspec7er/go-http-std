@@ -11,17 +11,16 @@ import (
 	"github.com/mrspec7er/go-http-std/app/utils"
 )
 
-
 type CastController struct {
 	service CastService
 }
 
-func(c *CastController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
+func (c *CastController) HandlerCreate(w http.ResponseWriter, r *http.Request) {
 	var cast model.Cast
-    if err := json.NewDecoder(r.Body).Decode(&cast); err != nil {
-        utils.BadRequestHandler(w)
-        return
-    }
+	if err := json.NewDecoder(r.Body).Decode(&cast); err != nil {
+		utils.BadRequestHandler(w)
+		return
+	}
 
 	status, err := c.service.Create(&cast)
 	if err != nil {
@@ -43,11 +42,11 @@ func (c *CastController) HandlerGetAll(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *CastController) HandlerGetOne(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id");
+	id := chi.URLParam(r, "id")
 	formattedId, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
 		utils.BadRequestHandler(w)
-        return
+		return
 	}
 
 	result, status, err := c.service.GetOne(uint(formattedId))

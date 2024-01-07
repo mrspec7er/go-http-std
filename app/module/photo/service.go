@@ -29,7 +29,7 @@ func (s *PhotoService) UploadPhoto(files []*multipart.FileHeader, movieId uint) 
 	photos := []*model.Photo{}
 
 	for _, fileHeader := range files {
-			err := os.MkdirAll("./assets/photos", os.ModePerm)
+		err := os.MkdirAll("./assets/photos", os.ModePerm)
 		if err != nil {
 			return nil, err
 		}

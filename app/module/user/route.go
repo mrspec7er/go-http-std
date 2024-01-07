@@ -5,12 +5,12 @@ import (
 	"github.com/mrspec7er/go-http-std/app/middleware"
 )
 
-func Routes(router chi.Router)  {
+func Routes(router chi.Router) {
 	c := &UserController{}
 	m := &middleware.AuthMiddleware{}
 
 	router.Post("/", c.HandlerCreate)
-	router.Get("/", c.HandlerGetAll)	
+	router.Get("/", c.HandlerGetAll)
 	router.Get("/{id}", c.HandlerGetOne)
 	router.Put("/{id}", HandlerUpdate)
 	router.Delete("/{id}", HandlerDelete)

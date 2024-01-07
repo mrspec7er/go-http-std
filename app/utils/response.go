@@ -6,22 +6,22 @@ import (
 )
 
 type Metadata struct {
-	Page int `json:"page"`
-	Limit int `json:"limit"`
+	Page  int   `json:"page"`
+	Limit int   `json:"limit"`
 	Count int64 `json:"count"`
 }
 
 func InternalServerErrorHandler(w http.ResponseWriter, status int, err error) {
 	message := err.Error()
-    response := struct {
-		Status		bool `json:"status"`
-		Message 	*string `json:"message"`
-		Data 		interface{} `json:"data"`
-		Metadata 	interface{} `json:"metadata"`
+	response := struct {
+		Status   bool        `json:"status"`
+		Message  *string     `json:"message"`
+		Data     interface{} `json:"data"`
+		Metadata interface{} `json:"metadata"`
 	}{
-		Status: false,
-		Message: &message,
-		Data: nil,
+		Status:   false,
+		Message:  &message,
+		Data:     nil,
 		Metadata: nil,
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -37,15 +37,15 @@ func InternalServerErrorHandler(w http.ResponseWriter, status int, err error) {
 
 func NotFoundHandler(w http.ResponseWriter) {
 	message := "Data Not Found"
-    response := struct {
-		Status		bool `json:"status"`
-		Message 	*string `json:"message"`
-		Data 		interface{} `json:"data"`
-		Metadata 	interface{} `json:"metadata"`
+	response := struct {
+		Status   bool        `json:"status"`
+		Message  *string     `json:"message"`
+		Data     interface{} `json:"data"`
+		Metadata interface{} `json:"metadata"`
 	}{
-		Status: false,
-		Message: &message,
-		Data: nil,
+		Status:   false,
+		Message:  &message,
+		Data:     nil,
 		Metadata: nil,
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -61,15 +61,15 @@ func NotFoundHandler(w http.ResponseWriter) {
 
 func BadRequestHandler(w http.ResponseWriter) {
 	message := "Bad Request"
-    response := struct {
-		Status		bool `json:"status"`
-		Message 	*string `json:"message"`
-		Data 		interface{} `json:"data"`
-		Metadata 	interface{} `json:"metadata"`
+	response := struct {
+		Status   bool        `json:"status"`
+		Message  *string     `json:"message"`
+		Data     interface{} `json:"data"`
+		Metadata interface{} `json:"metadata"`
 	}{
-		Status: false,
-		Message: &message,
-		Data: nil,
+		Status:   false,
+		Message:  &message,
+		Data:     nil,
 		Metadata: nil,
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -85,15 +85,15 @@ func BadRequestHandler(w http.ResponseWriter) {
 
 func UnauthorizeUser(w http.ResponseWriter) {
 	message := "Unauthorize user"
-    response := struct {
-		Status		bool `json:"status"`
-		Message 	*string `json:"message"`
-		Data 		interface{} `json:"data"`
-		Metadata 	interface{} `json:"metadata"`
+	response := struct {
+		Status   bool        `json:"status"`
+		Message  *string     `json:"message"`
+		Data     interface{} `json:"data"`
+		Metadata interface{} `json:"metadata"`
 	}{
-		Status: false,
-		Message: &message,
-		Data: nil,
+		Status:   false,
+		Message:  &message,
+		Data:     nil,
 		Metadata: nil,
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -108,15 +108,15 @@ func UnauthorizeUser(w http.ResponseWriter) {
 }
 
 func SuccessMessageResponse(w http.ResponseWriter, message string) {
-    response := struct {
-		Status		bool `json:"status"`
-		Message 	*string `json:"message"`
-		Data 		interface{} `json:"data"`
-		Metadata 	interface{} `json:"metadata"`
+	response := struct {
+		Status   bool        `json:"status"`
+		Message  *string     `json:"message"`
+		Data     interface{} `json:"data"`
+		Metadata interface{} `json:"metadata"`
 	}{
-		Status: true,
-		Message: &message,
-		Data: nil,
+		Status:   true,
+		Message:  &message,
+		Data:     nil,
 		Metadata: nil,
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -130,16 +130,16 @@ func SuccessMessageResponse(w http.ResponseWriter, message string) {
 	w.Write(responseData)
 }
 
-func MutationSuccessResponse(w http.ResponseWriter, message string)  {
+func MutationSuccessResponse(w http.ResponseWriter, message string) {
 	response := struct {
-		Status		bool `json:"status"`
-		Message 	*string `json:"message"`
-		Data 		interface{} `json:"data"`
-		Metadata 	interface{} `json:"metadata"`
+		Status   bool        `json:"status"`
+		Message  *string     `json:"message"`
+		Data     interface{} `json:"data"`
+		Metadata interface{} `json:"metadata"`
 	}{
-		Status: true,
-		Message: &message,
-		Data: nil,
+		Status:   true,
+		Message:  &message,
+		Data:     nil,
 		Metadata: nil,
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -153,16 +153,16 @@ func MutationSuccessResponse(w http.ResponseWriter, message string)  {
 	w.Write(responseData)
 }
 
-func GetSuccessResponse(w http.ResponseWriter, message *string, data interface{}, metadata *Metadata)  {
+func GetSuccessResponse(w http.ResponseWriter, message *string, data interface{}, metadata *Metadata) {
 	response := struct {
-		Status		bool `json:"status"`
-		Message 	*string `json:"message"`
-		Data 		interface{} `json:"data"`
-		Metadata 	interface{} `json:"metadata"`
+		Status   bool        `json:"status"`
+		Message  *string     `json:"message"`
+		Data     interface{} `json:"data"`
+		Metadata interface{} `json:"metadata"`
 	}{
-		Status: true,
-		Message: message,
-		Data: data,
+		Status:   true,
+		Message:  message,
+		Data:     data,
 		Metadata: metadata,
 	}
 	w.Header().Set("Content-Type", "application/json")

@@ -26,7 +26,7 @@ func (m AuthMiddleware) AuthenticatedUser(next http.Handler) http.Handler {
 		}
 
 		token := strings.Split(cookie.Value, " ")
-	
+
 		info, err := m.GetUserInfo(token[0], token[1])
 		if err != nil {
 			utils.InternalServerErrorHandler(w, 500, err)
@@ -46,21 +46,20 @@ func (m AuthMiddleware) AuthorizeUser(roles ...string) func(http.Handler) http.H
 				utils.InternalServerErrorHandler(w, 400, err)
 				return
 			}
-	
+
 			token := strings.Split(cookie.Value, " ")
-		
+
 			user, err := m.GetUserInfo(token[0], token[1])
 			if err != nil {
 				utils.InternalServerErrorHandler(w, 500, err)
 				return
 			}
 
-
 			if !slices.Contains(roles, user.Role) || user.Status != "ACTIVE" {
 				utils.UnauthorizeUser(w)
 				return
-			} 
-	
+			}
+
 			ctx := context.WithValue(r.Context(), "user", &user)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
@@ -77,11 +76,11 @@ func (m AuthMiddleware) GetUserInfo(bearer string, accessToken string) (*model.U
 			}
 			return []byte("AUTH_SECRET"), nil
 		})
-	
+
 		if err != nil {
 			return nil, err
 		}
-	
+
 		claims, ok := payload.Claims.(jwt.MapClaims)
 		if !ok || !payload.Valid {
 			return nil, errors.New("Failed to encoded token payload")
@@ -96,7 +95,7 @@ func (m AuthMiddleware) GetUserInfo(bearer string, accessToken string) (*model.U
 		user, err := m.service.FindUserByEmail(email)
 		if err != nil {
 			return nil, err
-		} 
+		}
 
 		return user, nil
 	}
@@ -110,7 +109,7 @@ func (m AuthMiddleware) GetUserInfo(bearer string, accessToken string) (*model.U
 		user, err := m.service.FindUserByEmail(result.Email)
 		if err != nil {
 			return nil, err
-		} 
+		}
 
 		return user, nil
 	}

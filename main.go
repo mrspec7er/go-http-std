@@ -9,7 +9,7 @@ import (
 	"github.com/mrspec7er/go-http-std/app"
 )
 
-func init()  {
+func init() {
 	err := godotenv.Load()
 	if err != nil {
 		panic(err.Error())
@@ -25,5 +25,5 @@ func main() {
 	err := app.Start(ctx)
 	if err != nil {
 		panic(err)
-	} 
+	}
 }

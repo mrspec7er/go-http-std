@@ -13,20 +13,20 @@ type PhotoController struct {
 	service PhotoService
 }
 
-func(c *PhotoController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
+func (c *PhotoController) HandlerCreate(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseMultipartForm(32 << 20); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	movieIdStringify := chi.URLParam(r, "movieId");
+	movieIdStringify := chi.URLParam(r, "movieId")
 
 	movieId, err := strconv.ParseUint(movieIdStringify, 10, 32)
 	if err != nil {
 		utils.BadRequestHandler(w)
 		return
 	}
-	
+
 	fmt.Println(movieId)
 	files := r.MultipartForm.File["photos"]
 
@@ -42,7 +42,7 @@ func(c *PhotoController) HandlerCreate(w http.ResponseWriter, r *http.Request)  
 }
 
 func (c *PhotoController) HandlerGetAll(w http.ResponseWriter, r *http.Request) {
-	movieIdStringify := chi.URLParam(r, "movieId");
+	movieIdStringify := chi.URLParam(r, "movieId")
 
 	movieId, err := strconv.ParseUint(movieIdStringify, 10, 32)
 	if err != nil {
@@ -60,7 +60,7 @@ func (c *PhotoController) HandlerGetAll(w http.ResponseWriter, r *http.Request) 
 }
 
 func (c *PhotoController) HandlerDelete(w http.ResponseWriter, r *http.Request) {
-	movieIdStringify := chi.URLParam(r, "movieId");
+	movieIdStringify := chi.URLParam(r, "movieId")
 
 	movieId, err := strconv.ParseUint(movieIdStringify, 10, 32)
 	if err != nil {

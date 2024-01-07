@@ -11,17 +11,16 @@ import (
 	"github.com/mrspec7er/go-http-std/app/utils"
 )
 
-
 type UserController struct {
 	service UserService
 }
 
-func(c *UserController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
+func (c *UserController) HandlerCreate(w http.ResponseWriter, r *http.Request) {
 	var user model.User
-    if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-        utils.BadRequestHandler(w)
-        return
-    }
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		utils.BadRequestHandler(w)
+		return
+	}
 
 	status, err := c.service.Create(&user)
 	if err != nil {
@@ -44,11 +43,11 @@ func (c *UserController) HandlerGetAll(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *UserController) HandlerGetOne(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id");
+	id := chi.URLParam(r, "id")
 	formattedId, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
 		utils.BadRequestHandler(w)
-        return
+		return
 	}
 
 	result, status, err := c.service.GetOne(uint(formattedId))

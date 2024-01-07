@@ -15,12 +15,12 @@ type DirectorController struct {
 	service DirectorService
 }
 
-func(c *DirectorController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
+func (c *DirectorController) HandlerCreate(w http.ResponseWriter, r *http.Request) {
 	var director model.Director
-    if err := json.NewDecoder(r.Body).Decode(&director); err != nil {
-        utils.BadRequestHandler(w)
-        return
-    }
+	if err := json.NewDecoder(r.Body).Decode(&director); err != nil {
+		utils.BadRequestHandler(w)
+		return
+	}
 
 	status, err := c.service.Create(&director)
 	if err != nil {
@@ -42,11 +42,11 @@ func (c *DirectorController) HandlerGetAll(w http.ResponseWriter, r *http.Reques
 }
 
 func (c *DirectorController) HandlerGetOne(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id");
+	id := chi.URLParam(r, "id")
 	formattedId, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
 		utils.BadRequestHandler(w)
-        return
+		return
 	}
 
 	result, status, err := c.service.GetOne(uint(formattedId))

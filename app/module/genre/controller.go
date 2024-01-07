@@ -15,12 +15,12 @@ type GenreController struct {
 	service GenreService
 }
 
-func(c *GenreController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
+func (c *GenreController) HandlerCreate(w http.ResponseWriter, r *http.Request) {
 	var genre model.Genre
-    if err := json.NewDecoder(r.Body).Decode(&genre); err != nil {
-        utils.BadRequestHandler(w)
-        return
-    }
+	if err := json.NewDecoder(r.Body).Decode(&genre); err != nil {
+		utils.BadRequestHandler(w)
+		return
+	}
 
 	status, err := c.service.Create(&genre)
 	if err != nil {
@@ -42,11 +42,11 @@ func (c *GenreController) HandlerGetAll(w http.ResponseWriter, r *http.Request) 
 }
 
 func (c *GenreController) HandlerGetOne(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id");
+	id := chi.URLParam(r, "id")
 	formattedId, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
 		utils.BadRequestHandler(w)
-        return
+		return
 	}
 
 	result, status, err := c.service.GetOne(uint(formattedId))

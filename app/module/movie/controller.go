@@ -15,12 +15,12 @@ type MovieController struct {
 	service MovieService
 }
 
-func(c *MovieController) HandlerCreate(w http.ResponseWriter, r *http.Request)  {
+func (c *MovieController) HandlerCreate(w http.ResponseWriter, r *http.Request) {
 	var movie model.Movie
-    if err := json.NewDecoder(r.Body).Decode(&movie); err != nil {
-        utils.BadRequestHandler(w)
-        return
-    }
+	if err := json.NewDecoder(r.Body).Decode(&movie); err != nil {
+		utils.BadRequestHandler(w)
+		return
+	}
 
 	status, err := c.service.Create(&movie)
 	if err != nil {
@@ -36,18 +36,18 @@ func (c *MovieController) HandlerGetAll(w http.ResponseWriter, r *http.Request) 
 	page, err := strconv.Atoi(p)
 	if err != nil {
 		utils.BadRequestHandler(w)
-        return
+		return
 	}
 
 	l := r.URL.Query().Get("limit")
 	limit, err := strconv.Atoi(l)
 	if err != nil {
 		utils.BadRequestHandler(w)
-        return
+		return
 	}
 
 	keyword := r.URL.Query().Get("keyword")
-	
+
 	result, count, status, err := c.service.GetAll(page, limit, keyword)
 	if err != nil {
 		utils.InternalServerErrorHandler(w, status, err)
@@ -55,7 +55,7 @@ func (c *MovieController) HandlerGetAll(w http.ResponseWriter, r *http.Request) 
 	}
 
 	metadata := utils.Metadata{
-		Page: page,
+		Page:  page,
 		Limit: limit,
 		Count: *count,
 	}
@@ -64,11 +64,11 @@ func (c *MovieController) HandlerGetAll(w http.ResponseWriter, r *http.Request) 
 }
 
 func (c *MovieController) HandlerGetOne(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id");
+	id := chi.URLParam(r, "id")
 	formattedId, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
 		utils.BadRequestHandler(w)
-        return
+		return
 	}
 
 	result, status, err := c.service.GetOne(uint(formattedId))
@@ -82,10 +82,10 @@ func (c *MovieController) HandlerGetOne(w http.ResponseWriter, r *http.Request) 
 
 func (c *MovieController) HandlerUpdate(w http.ResponseWriter, r *http.Request) {
 	var movie model.Movie
-    if err := json.NewDecoder(r.Body).Decode(&movie); err != nil || movie.ID == 0 {
-        utils.BadRequestHandler(w)
-        return
-    }
+	if err := json.NewDecoder(r.Body).Decode(&movie); err != nil || movie.ID == 0 {
+		utils.BadRequestHandler(w)
+		return
+	}
 
 	status, err := c.service.Update(&movie)
 	if err != nil {
@@ -96,7 +96,7 @@ func (c *MovieController) HandlerUpdate(w http.ResponseWriter, r *http.Request) 
 	utils.MutationSuccessResponse(w, "Successfully insert new movie")
 }
 
-func (c *MovieController) HandlerUpdateThumbnail(w http.ResponseWriter, r *http.Request)  {
+func (c *MovieController) HandlerUpdateThumbnail(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, utils.MAX_UPLOAD_SIZE)
 	if err := r.ParseMultipartForm(utils.MAX_UPLOAD_SIZE); err != nil {
 		http.Error(w, "The uploaded file is too big. Please choose an file that's less than 1MB in size", http.StatusBadRequest)

@@ -4,7 +4,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func Routes(router chi.Router)  {
+func Routes(router chi.Router) {
 	c := &AuthController{}
 
 	router.Get("/login", c.HandleLoginTemplate)

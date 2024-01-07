@@ -29,7 +29,7 @@ func (s *MovieService) Create(req *model.Movie) (int, error) {
 
 func (s *MovieService) GetAll(page int, limit int, keyword string) ([]*model.Movie, *int64, int, error) {
 
-	result, count, err := s.movie.GetAll(page -1, limit, keyword)
+	result, count, err := s.movie.GetAll(page-1, limit, keyword)
 
 	if err != nil {
 		return result, nil, 500, err

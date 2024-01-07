@@ -1,7 +1,7 @@
 package utils
 
 const (
-	DefaultAuth = "default"
+	DefaultAuth      = "default"
 	OauthStateGoogle = "google"
 )
 

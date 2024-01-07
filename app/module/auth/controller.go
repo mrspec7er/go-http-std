@@ -13,10 +13,10 @@ type AuthController struct {
 }
 
 type AuthPayload struct {
-	Email string `json:"email"`
-	Password string `json:"password"`
+	Email           string `json:"email"`
+	Password        string `json:"password"`
 	ConfirmPassword string `json:"confirmPassword"`
-	Token string `json:"token"`
+	Token           string `json:"token"`
 }
 
 func (AuthController) HandleGoogleLogin(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +42,7 @@ func (c *AuthController) HandleGoogleAuthCallback(w http.ResponseWriter, r *http
 		utils.InternalServerErrorHandler(w, status, err)
 		return
 	}
-	
+
 	tokenCookie := &http.Cookie{Name: "accessToken", Value: r.FormValue("state") + " " + *token, HttpOnly: false, Path: "/"}
 	http.SetCookie(w, tokenCookie)
 
@@ -51,41 +51,41 @@ func (c *AuthController) HandleGoogleAuthCallback(w http.ResponseWriter, r *http
 
 func (c *AuthController) HandleSendUpdatePassword(w http.ResponseWriter, r *http.Request) {
 	var payload AuthPayload
-    if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
-        utils.BadRequestHandler(w)
-        return
-    }
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		utils.BadRequestHandler(w)
+		return
+	}
 
 	token, err := c.service.GeneratePasswordTokenServices(payload.Email)
 	if err != nil {
-        utils.BadRequestHandler(w)
-        return
-    }
+		utils.BadRequestHandler(w)
+		return
+	}
 
 	fmt.Println("USER_TOKEN", *token)
 
 	// utils.SendUpdatePassword(token)
 
-	utils.SuccessMessageResponse(w, "Update Password Url sended to: " + payload.Email)
+	utils.SuccessMessageResponse(w, "Update Password Url sended to: "+payload.Email)
 }
 
 func (c *AuthController) HandleUpdatePassword(w http.ResponseWriter, r *http.Request) {
 	var payload AuthPayload
-    if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
-        utils.BadRequestHandler(w)
-        return
-    }
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		utils.BadRequestHandler(w)
+		return
+	}
 
 	if payload.Password != payload.ConfirmPassword {
 		utils.BadRequestHandler(w)
-        return
+		return
 	}
 
 	status, err := c.service.UpdatePasswordService(payload.Token, payload.Password)
 	if err != nil {
-        utils.InternalServerErrorHandler(w, status, err)
-        return
-    }
+		utils.InternalServerErrorHandler(w, status, err)
+		return
+	}
 
 	utils.SuccessMessageResponse(w, "Password Updated")
 }
@@ -102,16 +102,16 @@ func (c *AuthController) HandleLoginTemplate(w http.ResponseWriter, r *http.Requ
 
 func (c *AuthController) HandleEmailLogin(w http.ResponseWriter, r *http.Request) {
 	var payload AuthPayload
-    if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
-        utils.BadRequestHandler(w)
-        return
-    }
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		utils.BadRequestHandler(w)
+		return
+	}
 
 	token, user, err := c.service.LoginService(payload.Email, payload.Password)
 	if err != nil {
-        utils.BadRequestHandler(w)
-        return
-    }
+		utils.BadRequestHandler(w)
+		return
+	}
 
 	tokenCookie := &http.Cookie{Name: "accessToken", Value: utils.DefaultAuth + " " + *token, HttpOnly: false, Path: "/"}
 	http.SetCookie(w, tokenCookie)

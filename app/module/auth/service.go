@@ -20,16 +20,16 @@ type AuthService struct {
 }
 
 type UserInfo struct {
-	ID    string `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
-	VerifiedEmail bool `json:"verified_email"`
-	Picture string `json:"picture"`
+	ID            string `json:"id"`
+	Name          string `json:"name"`
+	Email         string `json:"email"`
+	VerifiedEmail bool   `json:"verified_email"`
+	Picture       string `json:"picture"`
 }
 
 var conf *oauth2.Config
 
-func Initialization()  {
+func Initialization() {
 	conf = &oauth2.Config{
 		ClientID:     "180626421605-3cn0spm34e6851vnp2aintbkibpjg8es.apps.googleusercontent.com",
 		ClientSecret: "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",
@@ -61,7 +61,7 @@ func (s AuthService) GetUserGoogleInfo(accessToken string) (*UserInfo, error) {
 	defer response.Body.Close()
 
 	userInfo := &UserInfo{}
-	
+
 	if err := json.NewDecoder(response.Body).Decode(&userInfo); err != nil {
 		return nil, err
 	}
@@ -98,14 +98,14 @@ func (s AuthService) CreateUser(req *model.User) (int, error) {
 func (s AuthService) GeneratePasswordTokenServices(email string) (*string, error) {
 	user, err := s.user.GetByEmail(email)
 	if err != nil {
-		return  nil, err
+		return nil, err
 	}
 
 	token, err := s.GenerateTokenService(user.Email, 1, "UPDATE_PASSWORD_SECRET")
 	if err != nil {
-		return  nil, err
+		return nil, err
 	}
-	
+
 	return token, nil
 }
 
@@ -114,7 +114,7 @@ func (s AuthService) UpdatePasswordService(token string, password string) (int, 
 	payload, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 		_, ok := t.Method.(*jwt.SigningMethodHMAC)
 		if !ok {
-			return nil, errors.New("Failed to parse JWT token!") 
+			return nil, errors.New("Failed to parse JWT token!")
 		}
 
 		return []byte("UPDATE_PASSWORD_SECRET"), nil
@@ -126,36 +126,36 @@ func (s AuthService) UpdatePasswordService(token string, password string) (int, 
 	claims, ok := payload.Claims.(jwt.MapClaims)
 
 	if !ok || !payload.Valid {
-		return  500, err
+		return 500, err
 	}
 
 	encryptedPass, err := bcrypt.GenerateFromPassword([]byte(password), 11)
 	if err != nil {
-		return  400, err
+		return 400, err
 	}
 
 	email, ok := claims["email"].(string)
 
 	if !ok {
-		return  500, errors.New("Failed to convert JWT payload")
+		return 500, errors.New("Failed to convert JWT payload")
 	}
-	
+
 	s.user.Password = string(encryptedPass)
 	s.user.Status = "ACTIVE"
 
 	err = s.user.Update(email)
 	if err != nil {
-		return  500, err
+		return 500, err
 	}
 
 	return 201, nil
 }
 
-func (s AuthService) GenerateTokenService(email string, duration int, secret string) (*string, error)  {
+func (s AuthService) GenerateTokenService(email string, duration int, secret string) (*string, error) {
 
 	payload := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"email": email,
-		"exp": time.Now().Add(time.Hour * time.Duration(duration)).Unix(),
+		"exp":   time.Now().Add(time.Hour * time.Duration(duration)).Unix(),
 	})
 
 	token, err := payload.SignedString([]byte(secret))
@@ -166,9 +166,9 @@ func (s AuthService) GenerateTokenService(email string, duration int, secret str
 	return &token, nil
 }
 
-func (s AuthService) LoginService(email string, password string) (*string, *model.User, error)  {
+func (s AuthService) LoginService(email string, password string) (*string, *model.User, error) {
 
-	user, err := s.user.GetByEmail(email) 
+	user, err := s.user.GetByEmail(email)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -187,7 +187,7 @@ func (s AuthService) LoginService(email string, password string) (*string, *mode
 }
 
 func (s AuthService) FindUserByEmail(email string) (*model.User, error) {
-	user, err := s.user.GetByEmail(email) 
+	user, err := s.user.GetByEmail(email)
 	if err != nil {
 		return nil, err
 	}
