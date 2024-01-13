@@ -17,19 +17,23 @@ type Cast struct {
 	Movies []*Movie `json:"movies" gorm:"many2many:cast_movies;"`
 }
 
+func (r *Cast) store() *gorm.DB {
+	return utils.DB
+}
+
 func (r *Cast) Create() error {
-	err := utils.DB.Create(&r).Error
+	err := r.store().Create(&r).Error
 	return err
 }
 
 func (r *Cast) GetAll() ([]*Cast, error) {
 	casts := []*Cast{}
-	err := utils.DB.Preload("Movies").Find(&casts).Error
+	err := r.store().Preload("Movies").Find(&casts).Error
 	return casts, err
 }
 
 func (r *Cast) GetByID(id uint) (*Cast, error) {
 	r.ID = id
-	err := utils.DB.Preload("Movies").First(&r).Error
+	err := r.store().Preload("Movies").First(&r).Error
 	return r, err
 }
