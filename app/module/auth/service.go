@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -31,9 +32,9 @@ var conf *oauth2.Config
 
 func Initialization() {
 	conf = &oauth2.Config{
-		ClientID:     "180626421605-3cn0spm34e6851vnp2aintbkibpjg8es.apps.googleusercontent.com",
-		ClientSecret: "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",
-		RedirectURL:  "http://localhost:8080/auth/callback",
+		ClientID:     os.Getenv("OAUTH_CLIENT_ID"),
+		ClientSecret: os.Getenv("OAUTH_CLIENT_SECRET"),
+		RedirectURL:  os.Getenv("OAUTH_REDIRECT_URL"),
 		Scopes: []string{
 			"https://www.googleapis.com/auth/userinfo.email",
 		},
