@@ -19,31 +19,35 @@ type Photo struct {
 	Movie   *Movie `json:"movie"`
 }
 
+func (r *Photo) store() *gorm.DB {
+	return utils.DB
+}
+
 func (r *Photo) BulkCreate(photos []*Photo) error {
-	err := utils.DB.Create(&photos).Error
+	err := r.store().Create(&photos).Error
 	return err
 }
 
 func (r *Photo) GetByMovieId(movieId uint) ([]*Photo, error) {
 	photos := []*Photo{}
-	err := utils.DB.Where("movie_id = ?", movieId).Find(&photos).Error
+	err := r.store().Where("movie_id = ?", movieId).Find(&photos).Error
 	return photos, err
 }
 
 func (r *Photo) GetByID(id uint) (*Photo, error) {
 	r.ID = id
-	err := utils.DB.Preload("Movies").First(&r).Error
+	err := r.store().Preload("Movies").First(&r).Error
 
 	return r, err
 }
 
 func (r *Photo) DeleteByID(id uint) (*Photo, error) {
 	r.ID = id
-	err := utils.DB.Delete(&r).Error
+	err := r.store().Delete(&r).Error
 	return r, err
 }
 
 func (r *Photo) DeleteByMovie(movieId uint) error {
-	err := utils.DB.Where("movie_id = ?", movieId).Delete(&r).Error
+	err := r.store().Where("movie_id = ?", movieId).Delete(&r).Error
 	return err
 }
