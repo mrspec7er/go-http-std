@@ -35,8 +35,12 @@ type Movie struct {
 	Photos []*Photo `json:"photos" gorm:"constraint:OnDelete:SET NULL"`
 }
 
+func (r *Movie) store() *gorm.DB {
+	return utils.DB
+}
+
 func (r *Movie) Create() error {
-	err := utils.DB.Create(&r).Error
+	err := r.store().Create(&r).Error
 	return err
 }
 
@@ -44,7 +48,7 @@ func (r *Movie) GetAll(offset int, limit int, keyword string) ([]*Movie, *int64,
 	movies := []*Movie{}
 	var count int64
 
-	query := utils.DB.Offset(offset * limit).Limit(limit)
+	query := r.store().Offset(offset * limit).Limit(limit)
 	if keyword != "" {
 		query = query.Where("LOWER(title) LIKE ? OR LOWER(description) LIKE ?", "%"+strings.ToLower(keyword)+"%", "%"+strings.ToLower(keyword)+"%")
 	}
@@ -54,21 +58,21 @@ func (r *Movie) GetAll(offset int, limit int, keyword string) ([]*Movie, *int64,
 
 func (r *Movie) GetByID(id uint) (*Movie, error) {
 	r.ID = id
-	err := utils.DB.Preload("Genre").Preload("Director").Preload("Casts").First(&r).Error
+	err := r.store().Preload("Genre").Preload("Director").Preload("Casts").First(&r).Error
 	return r, err
 }
 
 func (r *Movie) Update() error {
-	err := utils.DB.Updates(&r).Error
+	err := r.store().Updates(&r).Error
 	return err
 }
 
 func (r *Movie) UpdateModelAndAssociation() error {
-	err := utils.DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&r).Error
+	err := r.store().Session(&gorm.Session{FullSaveAssociations: true}).Updates(&r).Error
 	return err
 }
 
 func (r *Movie) UpdateAssociation() error {
-	res := utils.DB.Model(&r).Association("Casts").Replace(r.Casts)
+	res := r.store().Model(&r).Association("Casts").Replace(r.Casts)
 	return res
 }
