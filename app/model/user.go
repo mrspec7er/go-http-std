@@ -20,29 +20,33 @@ type User struct {
 	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 }
 
+func (r *User) store() *gorm.DB {
+	return utils.DB
+}
+
 func (r *User) Create() error {
-	err := utils.DB.Clauses(clause.OnConflict{DoNothing: true}).Create(&r).Error
+	err := r.store().Clauses(clause.OnConflict{DoNothing: true}).Create(&r).Error
 	return err
 }
 
 func (r *User) Update(email string) error {
-	err := utils.DB.Where(&User{Email: email}).Updates(&r).Error
+	err := r.store().Where(&User{Email: email}).Updates(&r).Error
 	return err
 }
 
 func (r *User) GetAll() ([]*User, error) {
 	users := []*User{}
-	err := utils.DB.Find(&users).Error
+	err := r.store().Find(&users).Error
 	return users, err
 }
 
 func (r *User) GetByID(id uint) (*User, error) {
 	r.ID = id
-	err := utils.DB.First(&r).Error
+	err := r.store().First(&r).Error
 	return r, err
 }
 
 func (r *User) GetByEmail(email string) (*User, error) {
-	err := utils.DB.Where("email = ?", email).First(&r).Error
+	err := r.store().Where("email = ?", email).First(&r).Error
 	return r, err
 }
