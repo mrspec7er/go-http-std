@@ -17,19 +17,23 @@ type Director struct {
 	Movies []*Movie `json:"movies"`
 }
 
+func (r *Director) store() *gorm.DB {
+	return utils.DB
+}
+
 func (r *Director) Create() error {
-	err := utils.DB.Create(&r).Error
+	err := r.store().Create(&r).Error
 	return err
 }
 
 func (r *Director) GetAll() ([]*Director, error) {
 	directors := []*Director{}
-	err := utils.DB.Preload("Movies").Find(&directors).Error
+	err := r.store().Preload("Movies").Find(&directors).Error
 	return directors, err
 }
 
 func (r *Director) GetByID(id uint) (*Director, error) {
 	r.ID = id
-	err := utils.DB.Preload("Movies").First(&r).Error
+	err := r.store().Preload("Movies").First(&r).Error
 	return r, err
 }
